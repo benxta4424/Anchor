@@ -1,0 +1,65 @@
+.fpBoxOptionLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.fpBoxOptionContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 400px;
+  
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 24px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Hover & Active States */
+.fpBoxOptionContainer:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 15px 30px rgba(108, 92, 231, 0.2);
+}
+
+.fpBoxOptionContainer:active {
+  transform: scale(0.96);
+}
+
+/* Icon Styling */
+.fpBoxOptionIcon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.fpBoxOptionTitle {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #4834d4;
+  letter-spacing: -0.5px;
+}
+
+.card-divider {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(108, 92, 231, 0.3), transparent);
+  margin: 15px auto;
+  width: 50%;
+}
+
+.fpBoxOptionDescription {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #636e72;
+  font-weight: 500;
+}

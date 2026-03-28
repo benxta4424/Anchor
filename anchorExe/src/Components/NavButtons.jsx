@@ -10,7 +10,6 @@ export default function NavButtons(props) {
                 <Link to="/details" className="navButton"> Details </Link>
                 <Link to="" className="navButton">Contact</Link>
                 <Link to="" className="navButton">Socials</Link>
-                <Link to="" className="navButton"></Link>
             </div>
         </>
     )

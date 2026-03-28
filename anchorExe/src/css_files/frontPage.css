@@ -1,10 +1,229 @@
+/* Custom properties for consistency */
+:root {
+  --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+  --glass-white: rgba(255, 255, 255, 0.85);
+  --accent-soft: #6c5ce7;
+  --text-main: #2d3436;
+  --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  
+  /* Definirea culorilor: am ales nuanțe de mov, albastru și aqua pentru calm */
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%; /* Important: face gradientul mare pentru a avea unde să se miște */
+  
+  animation: gradientBG 15s ease infinite;
+  background-attachment: fixed; /* Îl ține pe loc când dai scroll */
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .fpRoot {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px; /* Perfect for mobile and centered on desktop */
+  margin: 0 auto;
+  padding: 20px;
+  gap: 25px;
+  padding-bottom: 100px;
+}
+/* Navigation Container */
+.fpNavigation {
+  width: 100%;
+  background: var(--glass-white);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 12px 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  
+  /* Flexbox magic */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Pushes heart to one side, buttons to the other */
+  gap: 15px;
+}
 
-    max-width: 80%;
-    min-width: 67%;
-    padding: 50px;
+/* Specific wrapper for buttons to ensure they grow correctly */
+.fpActualNavButtons {
+  flex: 1; 
+}
 
-    border: 10px solid green;
+/* Ensure NavButtons internal container doesn't break the layout */
+.navContainer {
+  display: flex;
+  justify-content: flex-end; /* Aligns buttons to the right */
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Responsive tweak for very small phones */
+@media (max-width: 400px) {
+  .fpNavigation {
+    flex-direction: column; /* Stacks heart on top of buttons if screen is too narrow */
+    text-align: center;
+  }
+  .navContainer {
+    justify-content: center;
+  }
+}
+
+/* Re-centering the heart wrapper since it's now in a flex row */
+.heart-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+.navContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.navButton {
+  text-decoration: none;
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.navButton:hover {
+  background: var(--accent-soft);
+  color: white;
+}
+
+/* Content Area */
+.content {
+  width: 100%;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* The Box Containers (Interface Options) */
+.fpChooseBox {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+  width: 100%;
+  max-width: 1200px; /* Ca să nu se întindă la infinit pe ecrane UltraWide */
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.fpBoxOptionContainer {
+  background: var(--glass-white);
+  border-radius: 24px;
+  padding: 25px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease;
+  border: 1px solid white;
+  max-height: 190px;
+  max-width: 100px;
+}
+
+.fpBoxOptionContainer:active {
+  transform: scale(0.98); /* Tactile feedback for mobile touch */
+}
+
+.fpBoxOptionTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--accent-soft);
+}
+
+.fpBoxOptionDescription {
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments for larger screens */
+@media (min-width: 768px) {
+  .fpRoot {
+    max-width: 800px;
+    padding: 50px 20px;
+  }
+}
+
+
+/* The Heart Container */
+.heart-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+/* Smaller, Subtle Pounding Heart */
+.heart {
+  background-color: #ff7675;
+  display: inline-block;
+  height: 18px; /* Reduced from 30px */
+  margin: 0 10px;
+  position: relative;
+  transform: rotate(-45deg);
+  width: 18px; /* Reduced from 30px */
+  animation: heartbeat 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+  box-shadow: 0 0 10px rgba(255, 118, 117, 0.3);
+}
+
+.heart:before,
+.heart:after {
+  content: "";
+  background-color: #ff7675;
+  border-radius: 50%;
+  height: 18px; /* Must match heart height */
+  position: absolute;
+  width: 18px;  /* Must match heart width */
+}
+
+.heart:before {
+  top: -9px; /* Exactly half of the height */
+  left: 0;
+}
+
+.heart:after {
+  left: 9px; /* Exactly half of the width */
+  top: 0;
+}
+
+/* Keep the same heartbeat animation from before */
+@keyframes heartbeat {
+  0% { transform: rotate(-45deg) scale(0.95); }
+  5% { transform: rotate(-45deg) scale(1.1); }
+  10% { transform: rotate(-45deg) scale(0.95); }
+  15% { transform: rotate(-45deg) scale(1.2); }
+  50% { transform: rotate(-45deg) scale(0.95); }
+  100% { transform: rotate(-45deg) scale(0.95); }
 }
