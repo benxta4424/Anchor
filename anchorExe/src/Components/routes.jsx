@@ -6,11 +6,17 @@ const my_routes = [
     {
         path: "/",
         element: <FrontPage />,
+
         children: [
             {
                 path: "/text_analiser",
                 element: <TextAnaliser />,
             } ,
+
+            // {
+            //     path: "/contact",
+            //     element: <Contact />,
+            // } ,
         ]
     }
 ]

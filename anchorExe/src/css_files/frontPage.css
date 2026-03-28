@@ -1,0 +1,10 @@
+.fpRoot {
+    display: flex;
+    flex-direction: column;
+
+    max-width: 80%;
+    min-width: 67%;
+    padding: 50px;
+
+    border: 10px solid green;
+}
