@@ -8,8 +8,8 @@ export default function NavButtons(props) {
             <div className="navContainer">
                 <Link to="/" className="navButton"> Home </Link>
                 <Link to="/details" className="navButton"> Details </Link>
-                <Link to="" className="navButton">Contact</Link>
-                <Link to="" className="navButton">Socials</Link>
+                <Link to="/contact" className="navButton"> Contact </Link>
+                <Link to="/socials" className="navButton"> Socials </Link>
             </div>
         </>
     )

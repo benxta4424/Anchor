@@ -24,7 +24,7 @@
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* Hover & Active States */
+
 .fpBoxOptionContainer:hover {
   transform: translateY(-8px);
   background: rgba(255, 255, 255, 0.9);
@@ -35,7 +35,6 @@
   transform: scale(0.96);
 }
 
-/* Icon Styling */
 .fpBoxOptionIcon {
   font-size: 2.5rem;
   margin-bottom: 15px;

@@ -8,6 +8,7 @@ import my_routes from './Components/routes'
 import "./css_files/frontPage.css"
 import "./css_files/choosingBox.css"
 import "./css_files/index.css"
+import "./css_files/details.css"
 
 const routes = createBrowserRouter(my_routes)
 

@@ -1,6 +1,7 @@
 import FrontPage from "./FontPage";
 import TextAnaliser from "./TextAnaliser";
-import InterfaceBox from "./ChooseInterfaceBox.jsx"
+import Details from "./Details.jsx";
+import Home from "./Home.jsx";
 
 const my_routes = [
     {
@@ -8,6 +9,21 @@ const my_routes = [
         element: <FrontPage />,
 
         children: [
+            {
+                index:true,
+                element: <Home />
+            },
+
+            {
+                path:"/details",
+                element: <Details />
+            },
+
+
+
+
+
+
             {
                 path: "/text_analiser",
                 element: <TextAnaliser />,
@@ -45,7 +61,8 @@ const my_routes = [
             //     element: <Contact />,
             // } ,
 
-        ]
+        ],
+
     }
 ]
 

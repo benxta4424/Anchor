@@ -1,0 +1,134 @@
+.detailsWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 20px;
+}
+
+.detailsContainer {
+    max-width: 850px;
+    width: 100%;
+    animation: fadeInContainer 1s ease-out;
+}
+
+.detailsHeader {
+    text-align: left;
+    margin-bottom: 30px;
+    padding-left: 10px;
+    border-left: 3px solid #6c5ce7;
+}
+
+.thesis-badge {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #a29bfe;
+    font-weight: 800;
+}
+
+.detailsHeader h1 {
+    font-size: 2.5rem;
+    margin: 0;
+    color: #fff;
+}
+
+.detailsHeader h1 span {
+    color: #6c5ce7;
+    text-shadow: 0 0 15px rgba(108, 92, 231, 0.6);
+}
+
+.bentoGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.detailCard {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(25px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+     color: wheat;
+}
+
+.detailCard:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(162, 155, 254, 0.5);
+    transform: scale(1.02);
+}
+
+
+.missionCard {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(90deg, rgba(108, 92, 231, 0.1), transparent);
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.icon { font-size: 1.5rem; }
+
+
+.dot {
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 10px;
+    box-shadow: 0 0 10px currentColor;
+}
+.dot.text { color: #00cec9; background: #00cec9; }
+.dot.audio { color: #fab1a0; background: #fab1a0; }
+.dot.security { color: #55efc4; background: #55efc4; }
+.dot.vision { color: #a29bfe; background: #a29bfe; }
+
+
+.emergencyBar {
+    grid-column: 1 / -1;
+    background: rgba(214, 48, 49, 0.1);
+    border: 1px solid rgba(214, 48, 49, 0.3);
+    border-radius: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 25px;
+    margin-top: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.sosBtn {
+    color: #ff7675;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1.1rem;
+    padding: 5px 15px;
+    border: 1px solid #ff7675;
+    border-radius: 50px;
+    transition: 0.3s;
+}
+
+.sosBtn:hover {
+    background: #ff7675;
+    color: #000;
+}
+
+@keyframes fadeInContainer {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+@media (max-width: 600px) {
+    .bentoGrid { grid-template-columns: 1fr; }
+    .emergencyBar { flex-direction: column; gap: 10px; border-radius: 20px; }
+}
