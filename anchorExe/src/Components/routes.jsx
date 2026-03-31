@@ -2,6 +2,7 @@ import FrontPage from "./FontPage";
 import TextAnaliser from "./TextAnaliser";
 import Details from "./Details.jsx";
 import Home from "./Home.jsx";
+import Contact from "./Contact.jsx";
 
 const my_routes = [
     {
@@ -17,6 +18,11 @@ const my_routes = [
             {
                 path:"/details",
                 element: <Details />
+            },
+
+            {
+                path:"/contact",
+                element: <Contact />
             },
 
 

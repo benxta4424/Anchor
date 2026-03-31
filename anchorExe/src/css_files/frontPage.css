@@ -107,7 +107,7 @@ body::after {
 
 @media (max-width: 400px) {
   .fpNavigation {
-    flex-direction: column; /
+    flex-direction: column; 
     text-align: center;
   }
   .navContainer {
@@ -246,7 +246,6 @@ body::after {
   left: 9px; 
   top: 0;
 }
-
 
 @keyframes heartbeat {
   0% { transform: rotate(-45deg) scale(0.95); }

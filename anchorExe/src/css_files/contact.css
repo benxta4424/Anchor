@@ -1,0 +1,112 @@
+.contactWrapper {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(25px);
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.8s ease-out;
+}
+
+.contactHeader {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.contactHeader h2 {
+    color: #fff;
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.contactHeader h2 span {
+    color: #6c5ce7;
+}
+
+.contactHeader p {
+    color: #b2bec3;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.contactForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.inputGroup label {
+    font-size: 0.8rem;
+    color: #a29bfe;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.contactForm input, 
+.contactForm textarea {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px 15px;
+    color: #fff;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.contactForm textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.contactForm input:focus, 
+.contactForm textarea:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: #6c5ce7;
+    box-shadow: 0 0 15px rgba(108, 92, 231, 0.3);
+}
+
+.contactForm input::placeholder, 
+.contactForm textarea::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.submitBtn {
+    background: #6c5ce7;
+    color: #fff;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.submitBtn:hover {
+    background: #5b4cc4;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(108, 92, 231, 0.4);
+}
+
+.submitBtn span {
+    font-size: 1.2rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
