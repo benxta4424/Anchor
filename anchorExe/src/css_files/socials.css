@@ -1,0 +1,99 @@
+.socialsWrapper {
+    max-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.socialsContent {
+    max-width: 900px;
+    width: 100%;
+}
+
+.socialsHeader {
+    text-align: center;
+    margin-bottom: 50px;
+    animation: fadeInDown 0.8s ease;
+}
+
+.socialsTitle {
+    font-size: 2.8rem;
+    color: #fff;
+    margin: 10px 0;
+}
+
+.socialsTitle span {
+    color: #6c5ce7;
+    text-shadow: 0 0 20px rgba(108, 92, 231, 0.4);
+}
+
+.socialsSubtitle {
+    color: #b2bec3;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.socialsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.socialCard {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.socialIcon {
+    font-size: 1.5rem;
+    font-weight: 900;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 18px;
+    color: #fff;
+}
+
+.socialInfo h3 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.2rem;
+}
+
+.socialInfo p {
+    margin: 5px 0 0;
+    color: #636e72;
+    font-size: 0.9rem;
+}
+
+.socialCard.linkedin:hover { border-color: #0077b5; box-shadow: 0 0 20px rgba(0, 119, 181, 0.2); }
+.socialCard.github:hover { border-color: #f1f1f1; box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); }
+.socialCard.instagram:hover { border-color: #e1306c; box-shadow: 0 0 20px rgba(225, 48, 108, 0.2); }
+.socialCard.twitter:hover { border-color: #1da1f2; box-shadow: 0 0 20px rgba(29, 161, 242, 0.2); }
+
+.socialCard:hover {
+    transform: scale(1.03) translateY(-5px);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 650px) {
+    .socialsGrid { grid-template-columns: 1fr; }
+}
