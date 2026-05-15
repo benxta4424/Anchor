@@ -10,9 +10,9 @@ export default function Home() {
     return (
         <>
             <div className="fpChooseBox">
-                <InterfaceBox icon={textAnalyserIcon} title={"Analyze Messages"} description={"Analyse behaviour through text"} boxID={1}/>
-                <InterfaceBox icon={faceAnalyserIcon} title={"Analyze Face"} description={"Analyse behaviour through facial features"} boxID={2}/>
-                <InterfaceBox icon={voiceAnalyserIcon} title={"Analyze Voice"} description={"Analyse behaviour through vocal features"} boxID={3}/>
+                <InterfaceBox icon={textAnalyserIcon} title={"Analyze Messages"} description={"Analyse behaviour through text"} boxID={"/text_analiser"}/>
+                <InterfaceBox icon={faceAnalyserIcon} title={"Analyze Face"} description={"Analyse behaviour through facial features"} boxID={"/face_analiser"}/>
+                <InterfaceBox icon={voiceAnalyserIcon} title={"Analyze Voice"} description={"Analyse behaviour through vocal features"} boxID={"/voice_analiser"}/>
             </div>
         </>
     )
