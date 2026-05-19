@@ -1,15 +1,103 @@
 // deci ca sa imi fie mai usor, o sa incerc sa fac un script de pyuthon care face text recognition din poza si mi l trimite ca si text aici ca sa nu incarc AI ul prea mukt
 // deci eu o sa primesc SS cu textul unui prieten si scriptul o sa scoata textul din poza ca sa nu trebuiasca sa o faca AI ul
 // dupa ce scoate scriptul, o sa trimit in backend API ul AI ului mesajul in sine si o sa l pun sa detecteze asa, pare mnai usor sincer
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 
 export default function TextAnaliser() {
+    const [chats, setChats] = useState([]);
+    const [activeChat, setActiveChat] = useState(null);
+    const [showNewChatModal, setShowNewChatModal] = useState(false);
+    const [newPersonName, setNewPersonName] = useState("");
+
     const [rawText, setRawText] = useState("");
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [result, setResult] = useState(null);
+    const [chatMessages, setChatMessages] = useState([]);
+    const [lastScore, setLastScore] = useState(null);
+
+    const messagesEndRef = useRef(null);
+
+    useEffect(() => {
+        fetchChats();
+    }, []);
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [chatMessages]);
+
+    useEffect(() => {
+        if (activeChat) {
+            fetchChatMessages(activeChat.id);
+            setLastScore(null);
+        } else {
+            setChatMessages([]);
+            setLastScore(null);
+        }
+    }, [activeChat]);
+
+    const fetchChats = async () => {
+        try {
+            const response = await fetch("http://localhost:5000/get-chats");
+            const data = await response.json();
+            setChats(data);
+            if (data.length > 0 && !activeChat) setActiveChat(data[0]);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const fetchChatMessages = async (chatId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/get-chat-messages/${chatId}`);
+            const data = await response.json();
+            setChatMessages(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleCreateChat = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch("http://localhost:5000/create-chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nume: newPersonName.trim() })
+            });
+            const newChat = await response.json();
+            setChats((prev) => [newChat, ...prev]);
+            setActiveChat(newChat);
+            setNewPersonName("");
+            setShowNewChatModal(false);
+        } catch (error) {
+            alert("Eroare la crearea sesiunii.");
+        }
+    };
+
+    // FUNCȚIA NOUĂ PENTRU ȘTERGEREA CHAT-ULUI
+    const handleDeleteChat = async (chatId, e) => {
+        e.stopPropagation(); // Previne selectarea chat-ului când apeși pe ștergere
+        if (!window.confirm("Sigur dorești să ștergi această sesiune?")) return;
+
+        try {
+            const response = await fetch(`http://localhost:5000/delete-chat/${chatId}`, {
+                method: "DELETE"
+            });
+            if (response.ok) {
+                const updatedChats = chats.filter(c => c.id !== chatId);
+                setChats(updatedChats);
+                if (activeChat?.id === chatId) {
+                    setActiveChat(updatedChats.length > 0 ? updatedChats[0] : null);
+                }
+            } else {
+                alert("Eroare la ștergerea de pe server.");
+            }
+        } catch (error) {
+            console.error("Eroare:", error);
+        }
+    };
 
     const handleFileChange = (e) => {
         const selected = e.target.files[0];
@@ -19,28 +107,23 @@ export default function TextAnaliser() {
         }
     };
 
-    const handleRemoveImage = () => {
-        setFile(null);
-        setPreview(null);
-    };
-
     const handleSend = async (e) => {
         e.preventDefault();
-        if (!rawText.trim() && !file) {
-                return alert("Scrie un mesaj sau încarcă o imagine!");
-            }
+        if (!activeChat || (!rawText.trim() && !file)) return;
 
-            setLoading(true);
+        const currentText = rawText.trim();
+        const currentPreview = preview;
+
+        setChatMessages((prev) => [...prev, { sender: "user", text: currentText, image: currentPreview }]);
+        setLoading(true);
+        setRawText("");
+        setFile(null);
+        setPreview(null);
+
         const formData = new FormData();
-        
-       
-        if (rawText.trim()) {
-            formData.append("rawText", rawText.trim());
-        }
-        
-        if (file) {
-            formData.append("image", file);
-        }
+        formData.append("chatId", activeChat.id);
+        if (currentText) formData.append("rawText", currentText);
+        if (file) formData.append("image", file);
 
         try {
             const response = await fetch("http://localhost:5000/analyze-text", {
@@ -48,120 +131,149 @@ export default function TextAnaliser() {
                 body: formData,
             });
             const data = await response.json();
-            setResult(data);
-            
-          
-            setRawText("");
-            setFile(null);
-            setPreview(null);
+
+            setChatMessages((prev) => [...prev, {
+                sender: "ai",
+                text: data.feedback,
+                score: data.score,
+                category: data.category,
+                indicators: data.indicators
+            }]);
+            setLastScore({ score: data.score, category: data.category });
         } catch (error) {
-            console.error("Eroare:", error);
-            alert("Nu s-a putut conecta la serverul Flask (port 5000).");
+            console.error(error);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="analiserWrapper">
-            <header className="analiserHeader">
-                <h1>Mind<span>Scan</span> Chat</h1>
-                <p>Scrie un mesaj sau încarcă un screenshot pentru analiză instantanee.</p>
-            </header>
-
-            <div className="analiserGrid">
-                
-                <div className="chatInterfaceCard">
-                    <div className="chatPreviewArea">
-                        {preview ? (
-                            <div className="imagePreviewContainer">
-                                <img src={preview} alt="Preview" className="chatImgPreview" />
-                                <button className="removeImgBtn" onClick={handleRemoveImage}>✕</button>
-                            </div>
-                        ) : (
-                            <div className="chatPlaceholder">
-                                <div className="heart-wrapper">
-                                    <div className="heart"></div>
-                                </div>
-                                <p>Sistemul este pregătit. Scrie direct sau atașează o imagine folosind iconița din colț.</p>
-                            </div>
-                        )}
-                    </div>
-
-                   
-                    <form onSubmit={handleSend} className="chatInputWrapper">
-                        <label className="attachFileBtn" title="Încarcă screenshot">
-                            📷
-                            <input type="file" onChange={handleFileChange} accept="image/*" style={{ display: 'none' }} />
-                        </label>
-                        
-                        <input 
-                            type="text" 
-                            placeholder={preview ? "Adaugă o descriere imaginii sau trimite..." : "Scrie mesajul prietenului tău aici..."} 
-                            value={rawText}
-                            onChange={(e) => setRawText(e.target.value)}
-                            className="chatTextField"
-                            disabled={loading}
-                        />
-
-                        <button type="submit" className="chatSendBtn" disabled={loading || (!rawText.trim() && !file)}>
-                            {loading ? <div className="btnSpinner"></div> : "➔"}
-                        </button>
-                    </form>
+        <div className="cleanDashboard">
+            
+            {/* SIDEBAR ULTRA-SIMPLU */}
+            <aside className="cleanSidebar">
+                <div className="sidebarTopRow">
+                    <span>Sesiuni</span>
+                    <button onClick={() => setShowNewChatModal(true)} className="cleanAddBtn">+</button>
                 </div>
-
-                <div className="resultCard">
-                    <div className="cardHeader">
-                        <h3>Diagnostic AI</h3>
-                        {result?.cached && <span className="cacheBadge">Rezultat Securizat (Locked)</span>}
-                    </div>
-
-                    {result ? (
-                        <div className="resultContent">
-                            <div className="scoreSection">
-                                <div className="scoreRing">
-                                    <span className="scoreNumber">{result.score}%</span>
-                                    <span className="scoreLabel">Scor Risc</span>
-                                </div>
-                                <div className="categoryTag">{result.category}</div>
-                            </div>
-
-                            <div className="diagnosticGrid">
-                                <div className={`diagItem ${result.indicators?.is_adio ? 'active-red' : ''}`}>
-                                    📌 Adio / Finalitate
-                                </div>
-                                <div className={`diagItem ${result.indicators?.is_iminent ? 'active-red' : ''}`}>
-                                    ⏰ Plan Iminent
-                                </div>
-                                <div className={`diagItem ${result.indicators?.is_depresie ? 'active-orange' : ''}`}>
-                                    👤 Depresie Clinică
-                                </div>
-                                <div className={`diagItem ${result.indicators?.is_stres ? 'active-purple' : ''}`}>
-                                    ⚡ Stres Cotidian
-                                </div>
-                                <div className={`diagItem ${result.indicators?.is_umor ? 'active-blue' : ''}`}>
-                                    🎭 Umor / Sarcasm
-                                </div>
-                            </div>
-
-                            <div className="analysisBox">
-                                <div className="feedbackArea">
-                                    <p className="aiFeedback">"{result.feedback}"</p>
-                                </div>
-                                <div className="extractedTextArea">
-                                    <strong>Conținut procesat:</strong>
-                                    <p>{result.text_ocr || result.text_raw}</p>
-                                </div>
-                            </div>
+                <div className="cleanList">
+                    {chats.map((c) => (
+                        <div 
+                            key={c.id} 
+                            className={`cleanItem ${activeChat?.id === c.id ? "active" : ""}`}
+                            onClick={() => setActiveChat(c)}
+                        >
+                            <span className="title">{c.nume_persoana}</span>
+                            {/* Butonul de ștergere */}
+                            <button 
+                                className="deleteChatBtn" 
+                                onClick={(e) => handleDeleteChat(c.id, e)}
+                                title="Șterge sesiunea"
+                            >
+                                ✕
+                            </button>
                         </div>
-                    ) : (
-                        <div className="emptyResult">
-                            <div className="pulse-circle"></div>
-                            <p>Așteptare date din conversație...</p>
+                    ))}
+                </div>
+            </aside>
+
+            {/* ZONA DE CONVERSAȚIE */}
+            <main className="cleanChatArea">
+                <div className="cleanChatHeader">
+                    <div className="headerMeta">
+                        <h3>{activeChat ? activeChat.nume_persoana : "Selectați un subiect"}</h3>
+                    </div>
+                    {lastScore && (
+                        <div className="headerScore">
+                            Risc: <strong>{lastScore.score}%</strong>
                         </div>
                     )}
                 </div>
-            </div>
+
+                <div className="cleanChatBody">
+                    {chatMessages.length === 0 ? (
+                        <div className="cleanEmptyState">
+                            <p>Introduceți date text sau capturi de ecran pentru analiză.</p>
+                        </div>
+                    ) : (
+                        chatMessages.map((msg, index) => (
+                            <div key={index} className={`cleanMsgRow ${msg.sender}`}>
+                                <div className="cleanBubble">
+                                    {msg.image && <img src={msg.image} alt="Data snapshot" className="cleanBubbleImg" />}
+                                    {msg.text && <p className="msgText">{msg.text}</p>}
+                                    
+                                    {msg.sender === "ai" && (
+                                        <div className="diagnosticMetadata">
+                                            <span className="scoreLabel">{msg.category} ({msg.score}%)</span>
+                                            {msg.indicators && (
+                                                <div className="flagsContainer">
+                                                    {msg.indicators.is_adio && <span className="cleanFlag status-critical">Adio</span>}
+                                                    {msg.indicators.is_iminent && <span className="cleanFlag status-critical">Plan Iminent</span>}
+                                                    {msg.indicators.is_depresie && <span className="cleanFlag status-warning">Depresie</span>}
+                                                    {msg.indicators.is_stres && <span className="cleanFlag status-info">Stres</span>}
+                                                    {msg.indicators.is_umor && <span className="cleanFlag status-neutral">Umor</span>}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    )}
+                    <div ref={messagesEndRef} />
+                </div>
+
+                {/* ZONA DE INPUT */}
+                <form onSubmit={handleSend} className="cleanConsoleFooter">
+                    {preview && (
+                        <div className="cleanImagePreview">
+                            <img src={preview} alt="Buffer snapshot" />
+                            <button type="button" onClick={() => setFile(null) || setPreview(null)}>✕</button>
+                        </div>
+                    )}
+                    <div className="cleanInputRow">
+                        <label className="dnaAttachBtn">
+                            🧬
+                            <input type="file" onChange={handleFileChange} accept="image/*" style={{ display: "none" }} />
+                        </label>
+                        <input 
+                            type="text" 
+                            placeholder="Scrie un mesaj..."
+                            value={rawText}
+                            onChange={(e) => setRawText(e.target.value)}
+                            disabled={loading || !activeChat}
+                            className="cleanInputField"
+                        />
+                        <button type="submit" className="cleanSendBtn" disabled={loading || !activeChat || (!rawText.trim() && !file)}>
+                            {loading ? <div className="cleanSpinner"></div> : "Trimite"}
+                        </button>
+                    </div>
+                </form>
+            </main>
+
+            {/* MODAL MODAL PENTRU ADAUGARE */}
+            {showNewChatModal && (
+                <div className="cleanModalOverlay">
+                    <div className="cleanModal">
+                        <h4>Adăugare Subiect</h4>
+                        <form onSubmit={handleCreateChat}>
+                            <input 
+                                type="text" 
+                                placeholder="Nume subiect" 
+                                value={newPersonName}
+                                onChange={(e) => setNewPersonName(e.target.value)}
+                                className="cleanModalInput"
+                                autoFocus
+                            />
+                            <div className="cleanModalActions">
+                                <button type="button" onClick={() => setShowNewChatModal(false)}>Anulează</button>
+                                <button type="submit" className="cleanConfirm">Creează</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }
