@@ -13,6 +13,7 @@ import "./css_files/contact.css"
 import "./css_files/socials.css"
 import "./css_files/textAnaliser.css"
 import "./css_files/energencyPopup.css"
+import "./css_files/clinicalChart.css"
 
 
 const routes = createBrowserRouter(my_routes)

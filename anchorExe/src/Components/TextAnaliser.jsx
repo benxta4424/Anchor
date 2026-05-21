@@ -1,6 +1,3 @@
-// deci ca sa imi fie mai usor, o sa incerc sa fac un script de pyuthon care face text recognition din poza si mi l trimite ca si text aici ca sa nu incarc AI ul prea mukt
-// deci eu o sa primesc SS cu textul unui prieten si scriptul o sa scoata textul din poza ca sa nu trebuiasca sa o faca AI ul
-// dupa ce scoate scriptul, o sa trimit in backend API ul AI ului mesajul in sine si o sa l pun sa detecteze asa, pare mnai usor sincer
 import { useState, useEffect, useRef } from "react";
 import ClinicalChart from "./ClinicalChart";
 import EmergencyPopup from "./EmergencyPopup";
@@ -18,7 +15,7 @@ export default function TextAnaliser() {
     const [chatMessages, setChatMessages] = useState([]);
     const [lastScore, setLastScore] = useState(null);
 
-    const [showChart, setShowChart] = useState(false);
+    const [showChartModal, setShowChartModal] = useState(false);  // ✅ corect
     const [chartData, setChartData] = useState([]);
 
     const [showEmergencyPopup, setShowEmergencyPopup] = useState(false);
@@ -206,20 +203,14 @@ export default function TextAnaliser() {
                         )}
                         {activeChat && chartData.length > 0 && (
                             <button
-                                className={`chartToggleBtn ${showChart ? "active" : ""}`}
-                                onClick={() => setShowChart(v => !v)}
-                                title="Grafic evoluție"
-                            >
+                                className={`chartToggleBtn ${showChartModal ? "active" : ""}`}
+                                onClick={() => setShowChartModal(true)}
+                                title="Grafic evoluție">
                                 📊
                             </button>
                         )}
                     </div>
                 </div>
-
-                {/* GRAFIC EVOLUTIE — folosește componenta separată */}
-                {showChart && (
-                    <ClinicalChart chartData={chartData} />
-                )}
 
                 {/* MESAJE */}
                 <div className="cleanChatBody">
@@ -258,7 +249,6 @@ export default function TextAnaliser() {
                     <div ref={messagesEndRef} />
                 </div>
 
-                {/* INPUT */}
                 <form onSubmit={handleSend} className="cleanConsoleFooter">
                     {preview && (
                         <div className="cleanImagePreview">
@@ -286,7 +276,13 @@ export default function TextAnaliser() {
                 </form>
             </main>
 
-            {/* MODAL NOU SUBIECT */}
+            {showChartModal && (
+                <ClinicalChart 
+                    chartData={chartData} 
+                    onClose={() => setShowChartModal(false)}
+                />
+            )}
+
             {showNewChatModal && (
                 <div className="cleanModalOverlay">
                     <div className="cleanModal">
@@ -309,13 +305,13 @@ export default function TextAnaliser() {
                 </div>
             )}
 
-                        {showEmergencyPopup && (
+            {/* POPUP URGENȚĂ */}
+            {showEmergencyPopup && (
                 <EmergencyPopup 
                     score={criticalScore} 
                     onClose={() => setShowEmergencyPopup(false)} 
                 />
             )}
-            
         </div>
     );
 }

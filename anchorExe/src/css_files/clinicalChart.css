@@ -1,0 +1,93 @@
+/* Chart Modal - versiunea elegantă */
+.chartModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(2, 2, 5, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.chartModalContent {
+    background: linear-gradient(135deg, #0a0b10 0%, #0f111a 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(122, 162, 247, 0.2);
+    width: 90%;
+    max-width: 900px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    animation: modalFadeIn 0.2s ease;
+}
+
+.chartModalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(122, 162, 247, 0.15);
+    color: #7aa2f7;
+    font-weight: 500;
+}
+
+.chartCloseBtn {
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: #565f89;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.chartCloseBtn:hover {
+    background: rgba(247, 118, 142, 0.2);
+    color: #f7768e;
+}
+
+.chartModalBody {
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.chartModalFooter {
+    padding: 12px 20px;
+    border-top: 1px solid rgba(122, 162, 247, 0.15);
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.legendBadge {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    color: #a9b1d6;
+}
+
+.legendBadge.critical { border-left: 2px solid #f7768e; }
+.legendBadge.high { border-left: 2px solid #ff9f43; }
+.legendBadge.mid { border-left: 2px solid #7aa2f7; }
+.legendBadge.low { border-left: 2px solid #73daca; }
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
