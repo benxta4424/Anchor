@@ -2,7 +2,7 @@
 // deci eu o sa primesc SS cu textul unui prieten si scriptul o sa scoata textul din poza ca sa nu trebuiasca sa o faca AI ul
 // dupa ce scoate scriptul, o sa trimit in backend API ul AI ului mesajul in sine si o sa l pun sa detecteze asa, pare mnai usor sincer
 import { useState, useEffect, useRef } from "react";
-
+import ClinicalChart from "./ClinicalChart"; // Importă componenta separată
 
 export default function TextAnaliser() {
     const [chats, setChats] = useState([]);
@@ -17,11 +17,12 @@ export default function TextAnaliser() {
     const [chatMessages, setChatMessages] = useState([]);
     const [lastScore, setLastScore] = useState(null);
 
+    const [showChart, setShowChart] = useState(false);
+    const [chartData, setChartData] = useState([]);
+
     const messagesEndRef = useRef(null);
 
-    useEffect(() => {
-        fetchChats();
-    }, []);
+    useEffect(() => { fetchChats(); }, []);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -30,9 +31,11 @@ export default function TextAnaliser() {
     useEffect(() => {
         if (activeChat) {
             fetchChatMessages(activeChat.id);
+            fetchChartData(activeChat.id);
             setLastScore(null);
         } else {
             setChatMessages([]);
+            setChartData([]);
             setLastScore(null);
         }
     }, [activeChat]);
@@ -43,9 +46,7 @@ export default function TextAnaliser() {
             const data = await response.json();
             setChats(data);
             if (data.length > 0 && !activeChat) setActiveChat(data[0]);
-        } catch (error) {
-            console.error(error);
-        }
+        } catch (error) { console.error(error); }
     };
 
     const fetchChatMessages = async (chatId) => {
@@ -53,9 +54,15 @@ export default function TextAnaliser() {
             const response = await fetch(`http://localhost:5000/get-chat-messages/${chatId}`);
             const data = await response.json();
             setChatMessages(data);
-        } catch (error) {
-            console.error(error);
-        }
+        } catch (error) { console.error(error); }
+    };
+
+    const fetchChartData = async (chatId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/get-chat-scores/${chatId}`);
+            const data = await response.json();
+            setChartData(data);
+        } catch (error) { console.error(error); }
     };
 
     const handleCreateChat = async (e) => {
@@ -71,32 +78,22 @@ export default function TextAnaliser() {
             setActiveChat(newChat);
             setNewPersonName("");
             setShowNewChatModal(false);
-        } catch (error) {
-            alert("Eroare la crearea sesiunii.");
-        }
+        } catch (error) { alert("Eroare la crearea sesiunii."); }
     };
 
-    // FUNCȚIA NOUĂ PENTRU ȘTERGEREA CHAT-ULUI
     const handleDeleteChat = async (chatId, e) => {
-        e.stopPropagation(); // Previne selectarea chat-ului când apeși pe ștergere
+        e.stopPropagation();
         if (!window.confirm("Sigur dorești să ștergi această sesiune?")) return;
-
         try {
-            const response = await fetch(`http://localhost:5000/delete-chat/${chatId}`, {
-                method: "DELETE"
-            });
+            const response = await fetch(`http://localhost:5000/delete-chat/${chatId}`, { method: "DELETE" });
             if (response.ok) {
                 const updatedChats = chats.filter(c => c.id !== chatId);
                 setChats(updatedChats);
                 if (activeChat?.id === chatId) {
                     setActiveChat(updatedChats.length > 0 ? updatedChats[0] : null);
                 }
-            } else {
-                alert("Eroare la ștergerea de pe server.");
-            }
-        } catch (error) {
-            console.error("Eroare:", error);
-        }
+            } else { alert("Eroare la ștergerea de pe server."); }
+        } catch (error) { console.error("Eroare:", error); }
     };
 
     const handleFileChange = (e) => {
@@ -113,6 +110,7 @@ export default function TextAnaliser() {
 
         const currentText = rawText.trim();
         const currentPreview = preview;
+        const currentFile = file;
 
         setChatMessages((prev) => [...prev, { sender: "user", text: currentText, image: currentPreview }]);
         setLoading(true);
@@ -123,7 +121,7 @@ export default function TextAnaliser() {
         const formData = new FormData();
         formData.append("chatId", activeChat.id);
         if (currentText) formData.append("rawText", currentText);
-        if (file) formData.append("image", file);
+        if (currentFile) formData.append("image", currentFile);
 
         try {
             const response = await fetch("http://localhost:5000/analyze-text", {
@@ -137,9 +135,13 @@ export default function TextAnaliser() {
                 text: data.feedback,
                 score: data.score,
                 category: data.category,
-                indicators: data.indicators
+                indicators: data.indicators,
+                trend: data.trend_statistic,
             }]);
             setLastScore({ score: data.score, category: data.category });
+
+            // refresh grafic după trimitere
+            fetchChartData(activeChat.id);
         } catch (error) {
             console.error(error);
         } finally {
@@ -147,10 +149,11 @@ export default function TextAnaliser() {
         }
     };
 
+    // ─── RENDER ────────────────────────────────────────────────────
     return (
         <div className="cleanDashboard">
-            
-            {/* SIDEBAR ULTRA-SIMPLU */}
+
+            {/* SIDEBAR */}
             <aside className="cleanSidebar">
                 <div className="sidebarTopRow">
                     <span>Sesiuni</span>
@@ -158,20 +161,17 @@ export default function TextAnaliser() {
                 </div>
                 <div className="cleanList">
                     {chats.map((c) => (
-                        <div 
-                            key={c.id} 
+                        <div
+                            key={c.id}
                             className={`cleanItem ${activeChat?.id === c.id ? "active" : ""}`}
                             onClick={() => setActiveChat(c)}
                         >
                             <span className="title">{c.nume_persoana}</span>
-                            {/* Butonul de ștergere */}
-                            <button 
-                                className="deleteChatBtn" 
+                            <button
+                                className="deleteChatBtn"
                                 onClick={(e) => handleDeleteChat(c.id, e)}
                                 title="Șterge sesiunea"
-                            >
-                                ✕
-                            </button>
+                            >✕</button>
                         </div>
                     ))}
                 </div>
@@ -179,17 +179,36 @@ export default function TextAnaliser() {
 
             {/* ZONA DE CONVERSAȚIE */}
             <main className="cleanChatArea">
+
+                {/* HEADER */}
                 <div className="cleanChatHeader">
                     <div className="headerMeta">
                         <h3>{activeChat ? activeChat.nume_persoana : "Selectați un subiect"}</h3>
                     </div>
-                    {lastScore && (
-                        <div className="headerScore">
-                            Risc: <strong>{lastScore.score}%</strong>
-                        </div>
-                    )}
+                    <div className="headerRight">
+                        {lastScore && (
+                            <div className="headerScore">
+                                Risc: <strong>{lastScore.score}%</strong>
+                            </div>
+                        )}
+                        {activeChat && chartData.length > 0 && (
+                            <button
+                                className={`chartToggleBtn ${showChart ? "active" : ""}`}
+                                onClick={() => setShowChart(v => !v)}
+                                title="Grafic evoluție"
+                            >
+                                📊
+                            </button>
+                        )}
+                    </div>
                 </div>
 
+                {/* GRAFIC EVOLUTIE — folosește componenta separată */}
+                {showChart && (
+                    <ClinicalChart chartData={chartData} />
+                )}
+
+                {/* MESAJE */}
                 <div className="cleanChatBody">
                     {chatMessages.length === 0 ? (
                         <div className="cleanEmptyState">
@@ -201,10 +220,13 @@ export default function TextAnaliser() {
                                 <div className="cleanBubble">
                                     {msg.image && <img src={msg.image} alt="Data snapshot" className="cleanBubbleImg" />}
                                     {msg.text && <p className="msgText">{msg.text}</p>}
-                                    
+
                                     {msg.sender === "ai" && (
                                         <div className="diagnosticMetadata">
                                             <span className="scoreLabel">{msg.category} ({msg.score}%)</span>
+                                            {msg.trend && (
+                                                <span className="trendLabel">{msg.trend}</span>
+                                            )}
                                             {msg.indicators && (
                                                 <div className="flagsContainer">
                                                     {msg.indicators.is_adio && <span className="cleanFlag status-critical">Adio</span>}
@@ -223,12 +245,12 @@ export default function TextAnaliser() {
                     <div ref={messagesEndRef} />
                 </div>
 
-                {/* ZONA DE INPUT */}
+                {/* INPUT */}
                 <form onSubmit={handleSend} className="cleanConsoleFooter">
                     {preview && (
                         <div className="cleanImagePreview">
                             <img src={preview} alt="Buffer snapshot" />
-                            <button type="button" onClick={() => setFile(null) || setPreview(null)}>✕</button>
+                            <button type="button" onClick={() => { setFile(null); setPreview(null); }}>✕</button>
                         </div>
                     )}
                     <div className="cleanInputRow">
@@ -236,8 +258,8 @@ export default function TextAnaliser() {
                             🧬
                             <input type="file" onChange={handleFileChange} accept="image/*" style={{ display: "none" }} />
                         </label>
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             placeholder="Scrie un mesaj..."
                             value={rawText}
                             onChange={(e) => setRawText(e.target.value)}
@@ -251,15 +273,15 @@ export default function TextAnaliser() {
                 </form>
             </main>
 
-            {/* MODAL MODAL PENTRU ADAUGARE */}
+            {/* MODAL NOU SUBIECT */}
             {showNewChatModal && (
                 <div className="cleanModalOverlay">
                     <div className="cleanModal">
                         <h4>Adăugare Subiect</h4>
                         <form onSubmit={handleCreateChat}>
-                            <input 
-                                type="text" 
-                                placeholder="Nume subiect" 
+                            <input
+                                type="text"
+                                placeholder="Nume subiect"
                                 value={newPersonName}
                                 onChange={(e) => setNewPersonName(e.target.value)}
                                 className="cleanModalInput"
@@ -273,7 +295,6 @@ export default function TextAnaliser() {
                     </div>
                 </div>
             )}
-
         </div>
     );
 }
