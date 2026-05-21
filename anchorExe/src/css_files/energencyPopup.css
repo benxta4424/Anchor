@@ -1,0 +1,231 @@
+/* EmergencyPopup.css */
+.emergency-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(4px);
+    }
+}
+
+.emergency-popup {
+    background: linear-gradient(135deg, #0a0b10 0%, #0d0f18 100%);
+    border: 2px solid #f7768e;
+    border-radius: 16px;
+    padding: 28px 24px 24px;
+    max-width: 380px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(247, 118, 142, 0.2);
+    animation: slideUp 0.35s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.emergency-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    animation: pulseWarning 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseWarning {
+    0%, 100% {
+        transform: scale(1);
+        text-shadow: 0 0 0px #f7768e;
+    }
+    50% {
+        transform: scale(1.1);
+        text-shadow: 0 0 12px #f7768e;
+    }
+}
+
+.emergency-popup h2 {
+    color: #f7768e;
+    font-size: 1.4rem;
+    margin: 0 0 8px 0;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.emergency-score {
+    display: inline-block;
+    background: rgba(247, 118, 142, 0.15);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: #f7768e;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.emergency-popup p {
+    color: #a9b1d6;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 0 0 20px 0;
+}
+
+.emergency-numbers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.emergency-number-card {
+    background: rgba(247, 118, 142, 0.08);
+    border: 1px solid rgba(247, 118, 142, 0.3);
+    border-radius: 12px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+}
+
+.emergency-number-card:hover {
+    background: rgba(247, 118, 142, 0.15);
+    border-color: rgba(247, 118, 142, 0.5);
+    transform: translateX(4px);
+}
+
+.number-label {
+    font-size: 0.8rem;
+    color: #c0caf5;
+    font-weight: 500;
+}
+
+.number-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #f7768e;
+    letter-spacing: 1px;
+    text-decoration: none;
+}
+
+.number-value:hover {
+    text-decoration: underline;
+}
+
+.emergency-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.emergency-call-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+}
+
+.emergency-call-btn.primary {
+    background: #f7768e;
+    color: #0a0b10;
+}
+
+.emergency-call-btn.primary:hover {
+    background: #ff8ca3;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(247, 118, 142, 0.3);
+}
+
+.emergency-call-btn.secondary {
+    background: transparent;
+    border: 1px solid #f7768e;
+    color: #f7768e;
+}
+
+.emergency-call-btn.secondary:hover {
+    background: rgba(247, 118, 142, 0.1);
+    transform: scale(1.02);
+}
+
+.emergency-close-btn {
+    background: transparent;
+    border: none;
+    color: #565f89;
+    font-size: 0.7rem;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.emergency-close-btn:hover {
+    background: rgba(86, 95, 137, 0.2);
+    color: #c0caf5;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .emergency-popup {
+        padding: 20px 16px;
+        max-width: 320px;
+    }
+    
+    .emergency-popup h2 {
+        font-size: 1.2rem;
+    }
+    
+    .number-value {
+        font-size: 1rem;
+    }
+    
+    .emergency-buttons {
+        flex-direction: column;
+    }
+    
+    .emergency-call-btn {
+        padding: 10px;
+    }
+}
+
+/* Suport pentru preferințe reducere mișcare */
+@media (prefers-reduced-motion: reduce) {
+    .emergency-popup-overlay,
+    .emergency-popup,
+    .emergency-icon {
+        animation: none;
+    }
+    
+    .emergency-icon {
+        animation: none;
+        transform: scale(1);
+    }
+}

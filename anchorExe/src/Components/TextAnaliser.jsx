@@ -2,7 +2,8 @@
 // deci eu o sa primesc SS cu textul unui prieten si scriptul o sa scoata textul din poza ca sa nu trebuiasca sa o faca AI ul
 // dupa ce scoate scriptul, o sa trimit in backend API ul AI ului mesajul in sine si o sa l pun sa detecteze asa, pare mnai usor sincer
 import { useState, useEffect, useRef } from "react";
-import ClinicalChart from "./ClinicalChart"; // Importă componenta separată
+import ClinicalChart from "./ClinicalChart";
+import EmergencyPopup from "./EmergencyPopup";
 
 export default function TextAnaliser() {
     const [chats, setChats] = useState([]);
@@ -19,6 +20,9 @@ export default function TextAnaliser() {
 
     const [showChart, setShowChart] = useState(false);
     const [chartData, setChartData] = useState([]);
+
+    const [showEmergencyPopup, setShowEmergencyPopup] = useState(false);
+    const [criticalScore, setCriticalScore] = useState(null);
 
     const messagesEndRef = useRef(null);
 
@@ -64,6 +68,14 @@ export default function TextAnaliser() {
             setChartData(data);
         } catch (error) { console.error(error); }
     };
+
+    // Monitorizare scor critic pentru popup
+    useEffect(() => {
+        if (lastScore && lastScore.score >= 95) {
+            setCriticalScore(lastScore.score);
+            setShowEmergencyPopup(true);
+        }
+    }, [lastScore]);
 
     const handleCreateChat = async (e) => {
         e.preventDefault();
@@ -138,7 +150,8 @@ export default function TextAnaliser() {
                 indicators: data.indicators,
                 trend: data.trend_statistic,
             }]);
-            setLastScore({ score: data.score, category: data.category });
+            const newScore = { score: data.score, category: data.category };
+            setLastScore(newScore);
 
             // refresh grafic după trimitere
             fetchChartData(activeChat.id);
@@ -295,6 +308,14 @@ export default function TextAnaliser() {
                     </div>
                 </div>
             )}
+
+                        {showEmergencyPopup && (
+                <EmergencyPopup 
+                    score={criticalScore} 
+                    onClose={() => setShowEmergencyPopup(false)} 
+                />
+            )}
+            
         </div>
     );
 }
