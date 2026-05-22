@@ -14,7 +14,7 @@ import "./css_files/socials.css"
 import "./css_files/textAnaliser.css"
 import "./css_files/energencyPopup.css"
 import "./css_files/clinicalChart.css"
-
+import "./css_files/dashboard.css"
 
 const routes = createBrowserRouter(my_routes)
 

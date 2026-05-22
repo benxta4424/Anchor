@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import ClinicalChart from "./ClinicalChart";
 import EmergencyPopup from "./EmergencyPopup";
+import DashboardStats from "./DashboardStats";
 
 export default function TextAnaliser() {
     const [chats, setChats] = useState([]);
@@ -20,6 +21,8 @@ export default function TextAnaliser() {
 
     const [showEmergencyPopup, setShowEmergencyPopup] = useState(false);
     const [criticalScore, setCriticalScore] = useState(null);
+
+    const [showDashboard, setShowDashboard] = useState(false);
 
     const messagesEndRef = useRef(null);
 
@@ -201,12 +204,23 @@ export default function TextAnaliser() {
                                 Risc: <strong>{lastScore.score}%</strong>
                             </div>
                         )}
+                        
                         {activeChat && chartData.length > 0 && (
                             <button
                                 className={`chartToggleBtn ${showChartModal ? "active" : ""}`}
                                 onClick={() => setShowChartModal(true)}
                                 title="Grafic evoluție">
                                 📊
+                            </button>
+                        )}
+
+                        {activeChat && chartData.length > 0 && (
+                            <button
+                                className="chartToggleBtn"
+                                onClick={() => setShowDashboard(true)}
+                                title="Dashboard statistici"
+                            >
+                                📈
                             </button>
                         )}
                     </div>
@@ -280,6 +294,13 @@ export default function TextAnaliser() {
                 <ClinicalChart 
                     chartData={chartData} 
                     onClose={() => setShowChartModal(false)}
+                />
+            )}
+
+            {showDashboard && (
+                <DashboardStats 
+                    chatId={activeChat?.id} 
+                    onClose={() => setShowDashboard(false)}
                 />
             )}
 
