@@ -4,11 +4,12 @@ import requests
 import json
 import urllib3
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
+from collections import Counter
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
-import pytesseract
+import pytesseract 
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -440,6 +441,141 @@ def analyze_text():
     except Exception as e:
         print(f"❌ Eroare procesare: {e}")
         return jsonify({"error": str(e)}), 500
+    
+
+
+
+
+@app.route('/get-chat-stats/<int:chat_id>', methods=['GET'])
+def get_chat_stats(chat_id):
+    period = request.args.get('period', 'all')
+    
+    conn = sqlite3.connect(DB_FILE, timeout=10.0)
+    c = conn.cursor()
+    
+    # Query folosind structura reală a tabelului 'analize'
+    query = """
+        SELECT scor_calculat, category, feedback, data, 
+               ind_adio, ind_iminent, ind_depresie, ind_stres, ind_umor
+        FROM analize 
+        WHERE chat_id = ?
+    """
+    params = [chat_id]
+    
+    # Filtrare după perioadă
+    if period == 'week':
+        query += " AND data >= datetime('now', '-7 days')"
+    elif period == 'month':
+        query += " AND data >= datetime('now', '-30 days')"
+    
+    query += " ORDER BY data ASC"
+    
+    c.execute(query, params)
+    rows = c.fetchall()
+    
+    # Obține numele persoanei
+    c.execute("SELECT nume_persoana FROM chaturi WHERE id = ?", (chat_id,))
+    chat = c.fetchone()
+    
+    if not rows:
+        conn.close()
+        return jsonify({
+            'nume_persoana': chat[0] if chat else 'Unknown',
+            'scor_mediu': 0,
+            'total_mesaje': 0,
+            'total_analize': 0,
+            'mesaje_critice': 0,
+            'categorie_principala': 'N/A',
+            'categorie_procent': 0,
+            'trend': 0,
+            'prima_analiza': 'N/A',
+            'ultima_analiza': 'N/A',
+            'categorii': {},
+            'top_indicatori': [],
+            'mesaje_critice_lista': []
+        })
+    
+    # Extrage datele
+    scores = [row[0] for row in rows if row[0] is not None]
+    categories = [row[1] for row in rows if row[1] is not None]
+    messages = [row[2] for row in rows]  # feedback-ul e mesajul AI
+    dates = [row[3] for row in rows]
+    
+    # Indicatori pentru fiecare mesaj
+    indicators_list = []
+    for row in rows:
+        indicators = {
+            'is_adio': bool(row[4]),
+            'is_iminent': bool(row[5]),
+            'is_depresie': bool(row[6]),
+            'is_stres': bool(row[7]),
+            'is_umor': bool(row[8])
+        }
+        indicators_list.append(indicators)
+    
+    # Scor mediu
+    scor_mediu = round(sum(scores) / len(scores), 1) if scores else 0
+    
+    # Total analize
+    total_analize = len(rows)
+    mesaje_critice = len([s for s in scores if s >= 80]) if scores else 0
+    
+    # Categorie principală
+    categorie_counts = Counter(categories)
+    categorie_principala = categorie_counts.most_common(1)[0][0] if categorie_counts else "N/A"
+    categorie_procent = round((categorie_counts.get(categorie_principala, 0) / len(categories)) * 100) if categories else 0
+    
+    # Trend (scor ultimele 2 vs primele 2)
+    trend = 0
+    if len(scores) >= 4:
+        first_avg = sum(scores[:2]) / 2
+        last_avg = sum(scores[-2:]) / 2
+        trend = round(last_avg - first_avg, 1)
+    
+    # Primul și ultimul mesaj
+    prima_analiza = dates[0].split(' ')[0] if dates else "N/A"
+    ultima_analiza = dates[-1].split(' ')[0] if dates else "N/A"
+    
+    # Procesare indicatori (contează de câte ori apare fiecare)
+    indicatori_count = Counter()
+    for ind in indicators_list:
+        for key, value in ind.items():
+            if value:
+                nume = key.replace('is_', '').capitalize()
+                indicatori_count[nume] += 1
+    
+    top_indicatori = [
+        {'nume': nume, 'count': count} 
+        for nume, count in indicatori_count.most_common(5)
+    ]
+    
+    # Mesaje critice (scor >= 80)
+    mesaje_critice_lista = []
+    for i, score in enumerate(scores):
+        if score >= 80:
+            mesaje_critice_lista.append({
+                'score': score,
+                'text': (messages[i][:150] if messages[i] else "Mesaj indisponibil"),
+                'data': dates[i].split(' ')[0] if dates[i] else "N/A"
+            })
+    
+    conn.close()
+    
+    return jsonify({
+        'nume_persoana': chat[0] if chat else 'Unknown',
+        'scor_mediu': scor_mediu,
+        'total_mesaje': total_analize,
+        'total_analize': total_analize,
+        'mesaje_critice': mesaje_critice,
+        'categorie_principala': categorie_principala,
+        'categorie_procent': categorie_procent,
+        'trend': trend,
+        'prima_analiza': prima_analiza,
+        'ultima_analiza': ultima_analiza,
+        'categorii': dict(categorie_counts),
+        'top_indicatori': top_indicatori,
+        'mesaje_critice_lista': mesaje_critice_lista[:5]
+    })
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
