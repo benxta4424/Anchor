@@ -5,6 +5,7 @@ import Home from "./Home.jsx";
 import Contact from "./Contact.jsx";
 import Socials from "./Socials.jsx";
 
+
 const my_routes = [
     {
         path: "/",
@@ -48,31 +49,9 @@ const my_routes = [
             // },
 
             // {
-            //     path: "facial_analyser",
-            //     element: <Facial />
-            // } ,
-
-            // nav buttons
-            // {
-            //     path: "/contact",
-            //     element: <Contact />,
-            // } ,
-
-            // {
-            //     path: "/details",
-            //     element: <Details />,
-            // } ,
-
-            // {
-            //     path: "/Socials",
-            //     element: <Socials />,
-            // } ,
-
-                        // {
-            //     path: "/contact",
-            //     element: <Contact />,
-            // } ,
-
+            //     path: "/facial_analyser",
+            //     element: <FaceRecognition />
+            // } 
         ],
 
     }

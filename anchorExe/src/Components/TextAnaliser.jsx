@@ -24,6 +24,7 @@ export default function TextAnaliser() {
 
     const [showDashboard, setShowDashboard] = useState(false);
 
+
     const messagesEndRef = useRef(null);
 
     useEffect(() => { fetchChats(); }, []);
