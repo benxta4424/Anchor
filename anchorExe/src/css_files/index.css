@@ -1,54 +1,400 @@
-/* 1. Use a more-intuitive box-sizing model */
+/*
+ * Design Tokens — Anchor Design System
+ */
+
+:root {
+  /* Palette Primitives - Deep Indigo Theme */
+  --color-bg-h:       250;   --color-bg-s:       25%;  --color-bg-l:       7%;
+  --color-surface-h:  250;   --color-surface-s:  20%;  --color-surface-l:  12%;
+
+  /* Text channel */
+  --color-text-h:     250;   --color-text-s:     10%;  --color-text-l:     90%;
+
+  /* Primary action */
+  --color-primary-h:  260;   --color-primary-s:  60%;  --color-primary-l:  62%;
+
+  /* Accent */
+  --color-accent-h:   290;   --color-accent-s:   55%;  --color-accent-l:   58%;
+
+  /* Semantic status colors */
+  --color-success-h:  142;   --color-success-s:  52%;  --color-success-l:  48%;
+  --color-warning-h:  38;    --color-warning-s:  90%;  --color-warning-l:  50%;
+  --color-error-h:    4;     --color-error-s:    72%;  --color-error-l:    55%;
+  --color-info-h:     210;   --color-info-s:     60%;  --color-info-l:     52%;
+}
+
+/* Light theme override */
+[data-theme='light'] {
+  --color-bg-l:      97%;   --color-surface-l:  100%;
+  --color-text-l:    12%;
+  --color-primary-l: 52%;   --color-accent-l:   48%;
+}
+
+:root {
+  /* Semantic Colors */
+  --bg:              hsl(var(--color-bg-h) var(--color-bg-s) var(--color-bg-l));
+  --bg-hover:        hsl(var(--color-bg-h) var(--color-bg-s) calc(var(--color-bg-l) + 4%));
+  --surface:         hsl(var(--color-surface-h) var(--color-surface-s) var(--color-surface-l));
+  --surface-raised:  hsl(var(--color-surface-h) var(--color-surface-s) calc(var(--color-surface-l) + 4%));
+  --surface-overlay: hsl(var(--color-surface-h) var(--color-surface-s) var(--color-surface-l) / 0.85);
+  --surface-glass:   hsl(var(--color-surface-h) var(--color-surface-s) var(--color-surface-l) / 0.45);
+
+  --text:            hsl(var(--color-text-h) var(--color-text-s) var(--color-text-l));
+  --text-muted:      hsl(var(--color-text-h) var(--color-text-s) calc(var(--color-text-l) - 35%));
+  --text-faint:      hsl(var(--color-text-h) var(--color-text-s) calc(var(--color-text-l) - 50%));
+  --text-inverse:    hsl(var(--color-bg-h) var(--color-bg-s) var(--color-bg-l));
+
+  --primary:         hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l));
+  --primary-hover:   hsl(var(--color-primary-h) var(--color-primary-s) calc(var(--color-primary-l) + 8%));
+  --primary-active:  hsl(var(--color-primary-h) var(--color-primary-s) calc(var(--color-primary-l) - 6%));
+  --primary-subtle:  hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l) / 0.15);
+  --on-primary:      #ffffff;
+
+  --accent:          hsl(var(--color-accent-h) var(--color-accent-s) var(--color-accent-l));
+  --accent-hover:    hsl(var(--color-accent-h) var(--color-accent-s) calc(var(--color-accent-l) + 8%));
+  --accent-subtle:   hsl(var(--color-accent-h) var(--color-accent-s) var(--color-accent-l) / 0.15);
+
+  --border:          hsl(var(--color-bg-h) var(--color-bg-s) calc(var(--color-bg-l) + 12%));
+  --border-strong:   hsl(var(--color-bg-h) var(--color-bg-s) calc(var(--color-bg-l) + 20%));
+  --border-focus:    var(--primary);
+
+  --success:         hsl(var(--color-success-h), calc(var(--color-success-s) * 1%), calc(var(--color-success-l) * 1%));
+  --warning:         hsl(var(--color-warning-h), calc(var(--color-warning-s) * 1%), calc(var(--color-warning-l) * 1%));
+  --error:           hsl(var(--color-error-h), calc(var(--color-error-s) * 1%), calc(var(--color-error-l) * 1%));
+  --info:            hsl(var(--color-info-h), calc(var(--color-info-s) * 1%), calc(var(--color-info-l) * 1%));
+
+  --gradient-primary: linear-gradient(135deg, var(--primary), var(--accent));
+  --gradient-dark:    linear-gradient(135deg, hsl(var(--color-bg-h) var(--color-bg-s) var(--color-bg-l)), hsl(var(--color-surface-h) var(--color-surface-s) var(--color-surface-l)));
+
+  /* Spacing & Content Widths */
+  --content-sm:        640px;
+  --content-md:        768px;
+  --content-lg:        1024px;
+  --content-xl:        1280px;
+
+  /* Typography Properties */
+  --tracking-tight:    -0.02em;
+  --tracking-normal:   0em;
+  --tracking-wide:     0.025em;
+  --tracking-wider:    0.05em;
+  --tracking-widest:   0.1em;
+
+  --weight-normal:    400;
+  --weight-medium:    500;
+  --weight-semibold:  600;
+  --weight-bold:      700;
+  --weight-extrabold: 800;
+
+  --leading-none:      1;
+  --leading-tight:     1.25;
+  --leading-normal:    1.5;
+  --leading-relaxed:   1.75;
+  --leading-loose:     2;
+
+  /* Fonts - Pairing #10 Orbitron + Figtree */
+  --font-display:     'Orbitron', sans-serif;
+  --font-body:        'Figtree', sans-serif;
+  --font-mono:        'JetBrains Mono', monospace;
+
+  /* Typography Scale */
+  --text-xs:    clamp(0.650rem,  0.600rem + 0.150vw, 0.750rem);
+  --text-sm:    clamp(0.750rem,  0.700rem + 0.220vw, 0.850rem);
+  --text-base:  clamp(0.850rem,  0.800rem + 0.280vw, 0.950rem);
+  --text-lg:    clamp(1.000rem,  0.950rem + 0.350vw, 1.100rem);
+  --text-xl:    clamp(1.150rem,  1.100rem + 0.450vw, 1.250rem);
+  --text-2xl:   clamp(1.300rem,  1.200rem + 0.600vw, 1.450rem);
+  --text-3xl:   clamp(1.500rem,  1.400rem + 0.850vw, 1.750rem);
+  --text-4xl:   clamp(1.800rem,  1.600rem + 1.100vw, 2.100rem);
+  --text-hero:  clamp(2.200rem,  1.900rem + 1.600vw, 2.600rem);
+
+  /* Spacing */
+  --space-px:   1px;
+  --space-0-5:  0.125rem;  /* 2px */
+  --space-1:    0.25rem;   /* 4px */
+  --space-2:    0.5rem;    /* 8px */
+  --space-3:    0.75rem;   /* 12px */
+  --space-4:    1rem;      /* 16px */
+  --space-5:    1.25rem;   /* 20px */
+  --space-6:    1.5rem;    /* 24px */
+  --space-8:    2rem;      /* 32px */
+  --space-10:   2.5rem;    /* 40px */
+  --space-12:   3rem;      /* 48px */
+  --space-16:   4rem;      /* 64px */
+  --space-20:   5rem;      /* 80px */
+  --space-24:   6rem;      /* 96px */
+
+  /* Border Radius */
+  --radius-sm:   0.25rem;   /* 4px */
+  --radius-md:   0.5rem;    /* 8px */
+  --radius-lg:   0.75rem;   /* 12px */
+  --radius-xl:   1rem;      /* 16px */
+  --radius-2xl:  1.5rem;    /* 24px */
+  --radius-full: 9999px;
+
+  --radius-btn:   var(--radius-md);
+  --radius-card:  var(--radius-lg);
+  --radius-input: var(--radius-md);
+
+  /* Shadows */
+  --shadow-color: 250 25% 3%;
+  --shadow-sm:
+    0 1px 2px hsl(var(--shadow-color) / 0.15),
+    0 2px 4px hsl(var(--shadow-color) / 0.2);
+  --shadow-md:
+    0 4px 8px hsl(var(--shadow-color) / 0.2),
+    0 8px 16px hsl(var(--shadow-color) / 0.15);
+  --shadow-lg:
+    0 8px 16px hsl(var(--shadow-color) / 0.25),
+    0 16px 32px hsl(var(--shadow-color) / 0.2);
+  --shadow-glow: 0 0 15px hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l) / 0.35);
+
+  /* Motion */
+  --ease-standard:      cubic-bezier(0.2, 0, 0, 1);
+  --ease-out-expo:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring:        cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --duration-fast:     150ms;
+  --duration-normal:   280ms;
+  --duration-moderate: 400ms;
+
+  --transition-colors:
+    color            var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color     var(--duration-fast) var(--ease-standard),
+    box-shadow       var(--duration-fast) var(--ease-standard);
+
+  --z-base:     0;
+  --z-raised:   10;
+  --z-overlay:  400;
+  --z-modal:    500;
+  --z-toast:    600;
+}
+
+/* Base resets */
 *, *::before, *::after {
   box-sizing: border-box;
-}
-
-/* 2. Remove default margin */
-*:not(dialog) {
   margin: 0;
+  padding: 0;
 }
 
-/* 3. Enable keyword animations */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    interpolate-size: allow-keywords;
-  }
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  background-color: var(--bg);
 }
 
 body {
-  /* 4. Increase line-height */
-  line-height: 1.5;
-  /* 5. Improve text rendering */
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--text);
+  background-color: var(--bg);
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* 6. Improve media defaults */
-img, picture, video, canvas, svg {
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+h1 { font-size: var(--text-hero); }
+h2 { font-size: var(--text-4xl); }
+h3 { font-size: var(--text-3xl); }
+h4 { font-size: var(--text-2xl); }
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: var(--transition-colors);
+}
+a:hover {
+  color: var(--primary-hover);
+}
+a:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  background: none;
+  transition: var(--transition-colors);
+}
+
+img, video, svg, canvas {
   display: block;
   max-width: 100%;
 }
 
-/* 7. Inherit fonts for form controls */
-input, button, textarea, select {
-  font: inherit;
-}
-
-/* 8. Avoid text overflows */
-p, h1, h2, h3, h4, h5, h6 {
-  overflow-wrap: break-word;
-}
-
-/* 9. Improve line wrapping */
 p {
-  text-wrap: pretty;
-}
-h1, h2, h3, h4, h5, h6 {
-  text-wrap: balance;
+  max-width: var(--measure-normal);
+  color: var(--text-muted);
 }
 
-/*
-  10. Create a root stacking context
-*/
-#root, #__next {
+#root {
   isolation: isolate;
+  min-height: 100vh;
+}
+
+/* Utility Animations */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l) / 0.2); }
+  50% { box-shadow: 0 0 25px hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l) / 0.5); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.anim-fade-up {
+  animation: fade-up 0.5s var(--ease-out-expo) both;
+}
+
+.anim-fade-in {
+  animation: fade-in 0.4s var(--ease-standard) both;
+}
+
+.hover-lift {
+  transition: transform var(--duration-normal) var(--ease-out-expo), box-shadow var(--duration-normal) var(--ease-out-expo);
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.glass-panel {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
+  }
+}
+
+/* Clinical Report Printing (PDF) Layouts */
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+    font-family: Arial, sans-serif !important;
+  }
+
+  /* Hide all interactive shell layers, cameras and buttons */
+  .fpNavigation,
+  .cleanSidebar,
+  .cleanConsoleFooter,
+  .voice-recording-section,
+  .face-camera-section,
+  .file-upload-section,
+  .btn,
+  .btn-small,
+  .btn-play,
+  .theme-toggle-btn,
+  .chartToggleBtn,
+  .deleteChatBtn,
+  .cleanAddBtn,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset full viewport frames */
+  .fpRoot,
+  .cleanDashboard,
+  .cleanChatArea,
+  .voice-container,
+  .face-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    isolation: auto !important;
+  }
+
+  /* Format clinical cards to be medical page rows */
+  .analysis-result,
+  .face-analysis-result,
+  .voice-statistics,
+  .emotion-statistics,
+  .recommendations,
+  .voice-history,
+  .face-history {
+    background: #ffffff !important;
+    border: 1px solid #cccccc !important;
+    color: #000000 !important;
+    border-radius: 6px !important;
+    padding: 15px !important;
+    margin-bottom: 20px !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Ensure text transcript and observations are clean */
+  .transcript-section,
+  .descriptions-section,
+  .recommendation-item {
+    background: #f9f9f9 !important;
+    border: 1px solid #e5e5e5 !important;
+    color: #333333 !important;
+    padding: 12px !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #000000 !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+    margin-top: 15px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .score-value,
+  .metric-value,
+  .stat-value {
+    color: #000000 !important;
+  }
+
+  .score-bar,
+  .emotion-bar {
+    border: 1px solid #bbbbbb !important;
+    background: #eeeeee !important;
+  }
+
+  .score-fill,
+  .emotion-fill {
+    background: #555555 !important;
+  }
 }

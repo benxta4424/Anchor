@@ -4,6 +4,8 @@ import Details from "./Details.jsx";
 import Home from "./Home.jsx";
 import Contact from "./Contact.jsx";
 import Socials from "./Socials.jsx";
+import EnhancedVoiceComponent from "./EnhancedVoiceComponent.jsx";
+import EnhancedFaceComponent from "./EnhancedFaceComponent.jsx";
 
 
 const my_routes = [
@@ -43,15 +45,15 @@ const my_routes = [
             } ,
 
             
-            // {
-            //     path: "voice_analyzer",
-            //     element: <Voice />
-            // },
+            {
+                path: "/voice_analiser",
+                element: <EnhancedVoiceComponent chatId={1} />
+            },
 
-            // {
-            //     path: "/facial_analyser",
-            //     element: <FaceRecognition />
-            // } 
+            {
+                path: "/face_analiser",
+                element: <EnhancedFaceComponent chatId={1} />
+            } ,
         ],
 
     }

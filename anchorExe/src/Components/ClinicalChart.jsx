@@ -1,4 +1,6 @@
 import { Line } from "react-chartjs-2";
+import { createPortal } from "react-dom";
+import { useEffect } from "react";
 import {
     Chart as ChartJS,
     LineElement,
@@ -12,6 +14,14 @@ import {
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Filler);
 
 export default function ClinicalChart({ chartData, onClose }) {
+    useEffect(() => {
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = originalOverflow;
+        };
+    }, []);
+
     if (!chartData || chartData.length === 0) {
         return null;
     }
@@ -100,7 +110,7 @@ export default function ClinicalChart({ chartData, onClose }) {
 
     const minWidth = Math.max(500, chartData.length * 50);
 
-    return (
+    return createPortal(
         <div className="chartModal">
             <div className="chartModalContent">
                 <div className="chartModalHeader">
@@ -121,6 +131,7 @@ export default function ClinicalChart({ chartData, onClose }) {
                     <span className="legendBadge low">Neutru</span>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

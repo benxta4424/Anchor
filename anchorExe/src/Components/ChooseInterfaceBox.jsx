@@ -2,17 +2,20 @@ import { Link } from "react-router-dom";
 
 export default function InterfaceBox({ title, description, icon, boxID }) {
     return (
-        <>
-            <Link to={boxID} className="fpBoxOptionLink">
-                <div className="fpBoxOptionContainer">
-                    <div className="fpBoxOptionIcon">
-                        <img src={icon} alt="" style={{width: '100px', height:'200x', borderRadius:"20px"}} />
+        <Link to={boxID} className="fpBoxOptionLink">
+            <article className="fpBoxOptionContainer">
+                <div className="fpBoxOptionImageWrapper">
+                    <img src={icon} alt={`Icon for ${title}`} className="fpBoxOptionImage" />
+                    <div className="fpBoxOptionOverlay">
+                        <span className="fpBoxOptionCta">Launch →</span>
                     </div>
-
-                    <div className="fpBoxOptionTitle">{title}</div>
-                    <div className="fpBoxOptionDescription">{description}</div>
                 </div>
-            </Link>
-        </>    
+
+                <div className="fpBoxOptionText">
+                    <h2 className="fpBoxOptionTitle">{title}</h2>
+                    <p className="fpBoxOptionDescription">{description}</p>
+                </div>
+            </article>
+        </Link>
     );
 }

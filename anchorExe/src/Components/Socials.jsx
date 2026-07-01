@@ -1,48 +1,48 @@
 export default function Socials() {
     return (
-        <div className="socialsWrapper">
+        <section className="socialsWrapper anim-fade-up">
             <div className="socialsContent">
                 <header className="socialsHeader">
-                    <h1 className="socialsTitle">Our <span>Socials</span></h1>
+                    <h1 className="socialsTitle">Our <span className="socialsTitleAccent">Socials</span></h1>
                     <p className="socialsSubtitle">
-                        Pentru update-uri, tweaks la motoarele noastre AI sau dacă vrei să ne contactezi într-un mod diferit... Feel free to follow us.
+                        Pentru update-uri, tweaks la motoarele noastre AI sau dacă dorești să ne contactezi în mod diferit... Feel free to follow us.
                     </p>
                 </header>
 
                 <div className="socialsGrid">
-                    <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="socialCard linkedin">
-                        <div className="socialIcon">in</div>
+                    <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="socialCard linkedin" aria-label="Follow us on LinkedIn">
+                        <div className="socialIcon" aria-hidden="true">in</div>
                         <div className="socialInfo">
-                            <h3>LinkedIn</h3>
-                            <p>Update-uri profesionale și cercetare AI.</p>
+                            <h2 className="socialCardTitle">LinkedIn</h2>
+                            <p className="socialCardText">Update-uri profesionale și cercetări în domeniul inteligenței artificiale.</p>
                         </div>
                     </a>
 
-                    <a href="https://github.com" target="_blank" rel="noreferrer" className="socialCard github">
-                        <div className="socialIcon">git</div>
+                    <a href="https://github.com" target="_blank" rel="noreferrer" className="socialCard github" aria-label="Visit our GitHub code repository">
+                        <div className="socialIcon" aria-hidden="true">git</div>
                         <div className="socialInfo">
-                            <h3>GitHub</h3>
-                            <p>Vezi codul sursă și documentația.</p>
+                            <h2 className="socialCardTitle">GitHub</h2>
+                            <p className="socialCardText">Vezi codul sursă, documentația completă și contribuie.</p>
                         </div>
                     </a>
 
-                    <a href="https://instagram.com" target="_blank" rel="noreferrer" className="socialCard instagram">
-                        <div className="socialIcon">ig</div>
+                    <a href="https://instagram.com" target="_blank" rel="noreferrer" className="socialCard instagram" aria-label="Follow us on Instagram">
+                        <div className="socialIcon" aria-hidden="true">ig</div>
                         <div className="socialInfo">
-                            <h3>Instagram</h3>
-                            <p>Povestea din spatele AnchorExe.</p>
+                            <h2 className="socialCardTitle">Instagram</h2>
+                            <p className="socialCardText">Povestea din culisele dezvoltării aplicației AnchorExe.</p>
                         </div>
                     </a>
 
-                    <a href="https://twitter.com" target="_blank" rel="noreferrer" className="socialCard twitter">
-                        <div className="socialIcon">X</div>
+                    <a href="https://twitter.com" target="_blank" rel="noreferrer" className="socialCard twitter" aria-label="Follow us on Twitter or X">
+                        <div className="socialIcon" aria-hidden="true">X</div>
                         <div className="socialInfo">
-                            <h3>Twitter / X</h3>
-                            <p>Quick updates & AI news.</p>
+                            <h2 className="socialCardTitle">Twitter / X</h2>
+                            <p className="socialCardText">Noutăți rapide și știri despre tehnologiile noastre AI.</p>
                         </div>
                     </a>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

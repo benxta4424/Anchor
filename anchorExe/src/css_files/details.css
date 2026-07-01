@@ -1,134 +1,200 @@
+/*
+ * Details / Thesis Project Bento Grid Styling
+ */
+
 .detailsWrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
-    padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: var(--space-8) 0;
 }
 
 .detailsContainer {
-    max-width: 850px;
-    width: 100%;
-    animation: fadeInContainer 1s ease-out;
+  max-width: var(--content-md);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
 .detailsHeader {
-    text-align: left;
-    margin-bottom: 30px;
-    padding-left: 10px;
-    border-left: 3px solid #6c5ce7;
+  text-align: left;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--primary);
+  margin-bottom: var(--space-2);
 }
 
 .thesis-badge {
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #a29bfe;
-    font-weight: 800;
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--primary);
+  font-weight: var(--weight-bold);
+  display: block;
+  margin-bottom: var(--space-1);
 }
 
-.detailsHeader h1 {
-    font-size: 2.5rem;
-    margin: 0;
-    color: #fff;
+.detailsTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  color: var(--text);
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
-.detailsHeader h1 span {
-    color: #6c5ce7;
-    text-shadow: 0 0 15px rgba(108, 92, 231, 0.6);
+.detailsTitleAccent {
+  color: var(--primary);
+  text-shadow: 0 0 12px hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l) / 0.5);
 }
 
+.detailsSubtitle {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  margin-top: var(--space-1);
+}
+
+/* Bento Grid */
 .bentoGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  width: 100%;
 }
 
+/* Base Card Styling */
 .detailCard {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(25px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 20px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-     color: wheat;
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  transition: 
+    transform var(--duration-normal) var(--ease-out-expo),
+    border-color var(--duration-normal) var(--ease-standard),
+    box-shadow var(--duration-normal) var(--ease-standard);
+  box-shadow: var(--shadow-sm);
 }
 
 .detailCard:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(162, 155, 254, 0.5);
-    transform: scale(1.02);
-}
-
-
-.missionCard {
-    grid-column: 1 / -1;
-    display: flex;
-    flex-direction: column;
-    background: linear-gradient(90deg, rgba(108, 92, 231, 0.1), transparent);
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .cardHeader {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
-.icon { font-size: 1.5rem; }
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+}
 
+.cardTitleSmall {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+}
 
+.cardText {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+/* Asymmetric Bento Features */
+.missionCard {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l) / 0.1) 0%, transparent 100%);
+  border-left: 2px solid var(--primary);
+}
+
+.icon {
+  font-size: var(--text-xl);
+}
+
+/* Animated status glow dots */
 .dot {
-    height: 8px;
-    width: 8px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 10px;
-    box-shadow: 0 0 10px currentColor;
+  height: 8px;
+  width: 8px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+  box-shadow: 0 0 10px currentColor;
 }
-.dot.text { color: #00cec9; background: #00cec9; }
-.dot.audio { color: #fab1a0; background: #fab1a0; }
-.dot.security { color: #55efc4; background: #55efc4; }
-.dot.vision { color: #a29bfe; background: #a29bfe; }
 
+.dot.text { color: hsl(180, 80%, 50%); background: hsl(180, 80%, 50%); }
+.dot.audio { color: hsl(20, 95%, 60%); background: hsl(20, 95%, 60%); }
+.dot.security { color: hsl(142, 52%, 48%); background: hsl(142, 52%, 48%); }
+.dot.vision { color: hsl(290, 55%, 58%); background: hsl(290, 55%, 58%); }
 
+/* SOS Helpline Banner */
 .emergencyBar {
-    grid-column: 1 / -1;
-    background: rgba(214, 48, 49, 0.1);
-    border: 1px solid rgba(214, 48, 49, 0.3);
-    border-radius: 100px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 25px;
-    margin-top: 10px;
-    position: relative;
-    overflow: hidden;
+  grid-column: 1 / -1;
+  background: hsl(4, 72%, 55%, 0.08);
+  border: 1px solid hsl(4, 72%, 55%, 0.25);
+  border-radius: var(--radius-full);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-6);
+  margin-top: var(--space-3);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  gap: var(--space-4);
+}
+
+.emergencyText {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: hsl(4, 72%, 90%);
 }
 
 .sosBtn {
-    color: #ff7675;
-    text-decoration: none;
-    font-weight: 800;
-    font-size: 1.1rem;
-    padding: 5px 15px;
-    border: 1px solid #ff7675;
-    border-radius: 50px;
-    transition: 0.3s;
+  font-family: var(--font-display);
+  color: hsl(4, 72%, 55%);
+  text-decoration: none;
+  font-weight: var(--weight-bold);
+  font-size: var(--text-sm);
+  padding: var(--space-1-5) var(--space-4);
+  border: 1px solid hsl(4, 72%, 55%, 0.5);
+  border-radius: var(--radius-full);
+  transition: var(--transition-colors);
+  background: transparent;
+  white-space: nowrap;
 }
 
 .sosBtn:hover {
-    background: #ff7675;
-    color: #000;
+  background: hsl(4, 72%, 55%);
+  color: var(--on-primary);
+  border-color: hsl(4, 72%, 55%);
+  box-shadow: 0 0 15px hsl(4, 72%, 55% / 0.4);
 }
 
-@keyframes fadeInContainer {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-
-@media (max-width: 600px) {
-    .bentoGrid { grid-template-columns: 1fr; }
-    .emergencyBar { flex-direction: column; gap: 10px; border-radius: 20px; }
+/* Responsiveness */
+@media (max-width: 640px) {
+  .bentoGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .emergencyBar {
+    flex-direction: column;
+    text-align: center;
+    border-radius: var(--radius-xl);
+    padding: var(--space-4);
+  }
 }

@@ -1,49 +1,78 @@
 export default function Details() {
     return (
-        <div className="detailsWrapper">
+        <section className="detailsWrapper anim-fade-up">
             <div className="detailsContainer">
                 <header className="detailsHeader">
                     <span className="thesis-badge">Licență 2026</span>
-                    <h1>Anchor<span>Exe</span></h1>
-                    <p style={{color:"white"}}>Sistem Inteligent de Monitorizare Multimodală</p>
+                    <h1 className="detailsTitle">Anchor<span className="detailsTitleAccent">Exe</span></h1>
+                    <p className="detailsSubtitle">Sistem Inteligent de Monitorizare Multimodală</p>
                 </header>
 
                 <div className="bentoGrid">
-                    <section className="detailCard missionCard">
-                        <div className="cardHeader">
-                            <span className="icon">⚓</span>
-                            <h2>Viziune</h2>
-                        </div>
-                        <p>Identificăm amprenta digitală a depresiei prin AI, oferind suport invizibil dar prezent în momente critice.</p>
-                    </section>
+                    <article className="detailCard missionCard">
+                        <header className="cardHeader">
+                            <span className="icon" role="img" aria-label="anchor">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="svg-icon">
+                                    <circle cx="12" cy="5" r="2" />
+                                    <line x1="12" x2="12" y1="7" y2="21" />
+                                    <path d="M5 12H2a10 10 0 0 0 20 0h-3" />
+                                    <circle cx="12" cy="12" r="1.5" />
+                                </svg>
+                            </span>
+                            <h2 className="cardTitle">Viziune</h2>
+                        </header>
+                        <p className="cardText">
+                            Identificăm amprenta digitală a stărilor de depresie prin inteligență artificială, oferind un suport invizibil dar mereu prezent în momentele critice.
+                        </p>
+                    </article>
 
-                    <div className="detailCard">
-                        <h3><span className="dot text"></span>Text NLP</h3>
-                        <p>Analiză semantică pentru izolarea socială și indicii lingvistice de risc.</p>
-                    </div>
+                    <article className="detailCard">
+                        <header className="cardHeader">
+                            <span className="dot text"></span>
+                            <h3 className="cardTitleSmall">Text NLP</h3>
+                        </header>
+                        <p className="cardText">
+                            Analiză semantică și sintactică avansată pentru decodarea izolării sociale și determinarea indicilor lingvistice de risc.
+                        </p>
+                    </article>
 
-                    <div className="detailCard">
-                        <h3><span className="dot audio"></span>Audio DSP</h3>
-                        <p>Detectarea tonului monoton și a fragmentării discursului vocal.</p>
-                    </div>
+                    <article className="detailCard">
+                        <header className="cardHeader">
+                            <span className="dot audio"></span>
+                            <h3 className="cardTitleSmall">Audio DSP</h3>
+                        </header>
+                        <p className="cardText">
+                            Procesare de semnal audio în timp real pentru detectarea tonului monoton, a aplatizării afective și a fragmentării discursului.
+                        </p>
+                    </article>
 
-                    <div className="detailCard">
-                        <h3><span className="dot security"></span>Security</h3>
-                        <p>Procesare Edge: datele tale nu părăsesc niciodată dispozitivul.</p>
-                    </div>
+                    <article className="detailCard">
+                        <header className="cardHeader">
+                            <span className="dot security"></span>
+                            <h3 className="cardTitleSmall">Security</h3>
+                        </header>
+                        <p className="cardText">
+                            Confidențialitate garantată prin procesare locală tip Edge. Datele tale biometrice nu părăsesc niciodată dispozitivul.
+                        </p>
+                    </article>
 
-                    <div className="detailCard">
-                        <h3><span className="dot vision"></span>Vision AI</h3>
-                        <p>Clasificarea micro-expresiilor faciale prin rețele CNN avansate.</p>
-                    </div>
+                    <article className="detailCard">
+                        <header className="cardHeader">
+                            <span className="dot vision"></span>
+                            <h3 className="cardTitleSmall">Vision AI</h3>
+                        </header>
+                        <p className="cardText">
+                            Clasificare în timp real a micro-expresiilor faciale prin intermediul unei rețele neuronale convoluționale (CNN).
+                        </p>
+                    </article>
 
-                     <section className="emergencyBar">
+                    <section className="emergencyBar">
                         <div className="sos-glow"></div>
-                        <p style={{color:"white"}}>Ai nevoie de ajutor? Telverde Antisuicid:</p>
-                        <a href="tel:0800801200" className="sosBtn">0800 801 200</a>
+                        <p className="emergencyText">Ai nevoie de ajutor? Telverde Antisuicid (non-stop):</p>
+                        <a href="tel:0800801200" className="sosBtn" aria-label="Sună la Telverde Antisuicid">0800 801 200</a>
                     </section>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
