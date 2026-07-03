@@ -1,103 +1,224 @@
-# Documentație Tehnică Completă: Sistemul Multimodal Anchor
-Această documentație explică în detaliu arhitectura tehnică, fluxurile de date și modul de funcționare al sistemului de analiză psihologică multimodală (Text, Voce, Față) din cadrul aplicației **Anchor**.
+# ⚓ Anchor: Sistem Multimodal de Evaluare și Sprijin Psihologic
+
+[![React](https://img.shields.io/badge/Frontend-React%2019%20%2B%20Vite-blue?style=for-the-badge&logo=react)](https://react.dev/)
+[![Flask](https://img.shields.io/badge/Backend-Flask%20(Python)-green?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/)
+[![SQLite](https://img.shields.io/badge/Database-SQLite-003b57?style=for-the-badge&logo=sqlite)](https://www.sqlite.org/)
+[![Groq LPU](https://img.shields.io/badge/AI--Inference-Groq%20LPU%20Cloud-orange?style=for-the-badge)](https://groq.com/)
+[![License](https://img.shields.io/badge/Licență-UPT%20AIA-red?style=for-the-badge)](https://www.upt.ro/)
+
+**Anchor** este o platformă software avansată bazată pe o arhitectură client-server concepută pentru monitorizarea, analiza și evaluarea stării emoționale și psihologice a utilizatorilor. Sistemul funcționează prin corelarea și fuzionarea a trei canale senzoriale distincte (**Text**, **Voce** și **Față**) într-un **coeficient multimodal de risc**, oferind asistență empatică personalizată sau declanșând alerte de urgență în caz de pericol iminent.
+
 ---
+
+## 📖 Cuprins
+1. [Arhitectura Generală a Sistemului](#1-arhitectura-generală-a-sistemului)
+2. [Modulul de Text: Analiză Semantică & Pragmatică](#2-modulul-de-text-analiză-semantică--pragmatică)
+3. [Modulul de Voce: Prelucrare Paralingvistică DSP](#3-modulul-de-voce-prelucrare-paralingvistică-dsp)
+4. [Modulul de Față: Biometrie Locală & Supervizare Vision](#4-modulul-de-față-biometrie-locală--supervizare-vision)
+5. [Integrarea Multimodală & Scorul de Încredere](#5-integrarea-multimodală--scorul-de-încredere)
+6. [Persistența Datelor & Politica de Confidențialitate (GDPR)](#6-persistența-datelor--politica-de-confidențialitate-gdpr)
+7. [Ghid de Instalare & Configurare Pas cu Pas](#7-ghid-de-instalare--configurare-pas-cu-pas)
+8. [Lansarea în Execuție](#8-lansarea-în-execuție)
+
+---
+
 ## 1. Arhitectura Generală a Sistemului
-Sistemul este construit pe o arhitectură de tip client-server modernă, formată din:
-*   **Frontend (Client)**: O aplicație React 19 SPA (Single Page Application) cu Vite, responsabilă pentru interfața cu utilizatorul, randarea graficelor, captarea fluxului video de la webcam (folosind Face-API.js) și înregistrarea audio de la microfon.
-*   **Backend (Server)**: Un server Flask în Python rulează în interiorul unui mediu virtual (`venv`). Acesta expune endpoint-uri REST securizate, procesează datele binare sau base64, rulează algoritmi acustici de extragere a trăsăturilor și orchestrează apelurile către rețelele neuronale (Groq API).
-*   **Baza de date**: Un fișier SQLite local (`mindscan_history.db`) care reține istoricul sesiunilor (chat), datele analizelor text, parametrii faciali și înregistrările audio.
+
+Sistemul implementează o topologie modernă **hibridă Edge-Cloud**:
+*   **Edge AI (Local pe Client)**: Mimica facială și detectarea expresiilor sunt procesate în timp real în browserul clientului folosind **TensorFlow.js (Face-API.js)**, garantând zero-lag și protecția datelor.
+*   **Backend Orchestrator (Flask)**: Un server Python procesează datele primite, execută prelucrarea digitală de semnal acustic (DSP) și centralizează istoricul.
+*   **Cloud Inference (Groq LPU)**: Asigură inferența modelelor de inteligență artificială generativă (**Whisper-large-v3**, **Llama 3.1 8B**, **Llama 3.2 11B Vision**) la latențe ultra-scăzute (< 500ms).
+
 ```mermaid
 graph TD
-    A[React Client] -->|1. Analiză Text/OCR| B(Flask Backend)
+    A[React Client - SPA] -->|1. Analiză Text / OCR| B(Flask Backend)
     A -->|2. Înregistrare Voce - WAV| B
-    A -->|3. Face-API.js Detector Expresii| B
-    B -->|Groq Whisper & Llama 3.1| C[Groq AI API Cloud]
-    B -->|Persistență Date| D[(SQLite Database)]
-    B -->|Salvare Clipuri & Selfie-uri| E[uploads/ Directory]
+    A -->|3. Extragere Emoții Faciale - JSON| B
+    A -->|4. Supervizare Cadru - Base64 Image| B
+    B -->|Groq Cloud LPU SDK| C[Whisper / Llama 3.1 & 3.2]
+    B -->|Persistență Relațională| D[(SQLite mindscan_history.db)]
+    B -->|Stocare Securizată Fișiere| E[uploads/ Directory]
 ```
+
 ---
-## 2. Modulul de Text: Comunicarea cu AI-ul
-### Fluxul de Date
-1. Utilizatorul introduce text manual sau încarcă o captură de ecran. Dacă încarcă o imagine, frontend-ul o trimite ca fișier `multipart/form-data` la `/analyze-text`.
-2. Backend-ul utilizează **Tesseract OCR** (prin intermediul wrapper-ului `pytesseract`) pentru a extrage textul din imagine, dacă este prezent.
-3. Serverul interoghează baza de date pentru a obține ultimele 3 schimburi de mesaje (`get_recent_context`) și calculul traiectoriei emoționale anterioare a pacientului.
-4. Textul și contextul istoric sunt asamblate într-un Prompt securizat și trimise la **Groq API** folosind modelul `llama-3.1-8b-instant`.
-### Integrarea AI (Prompt-ul Clinic)
-AI-ul este instruit ca un psiholog clinician fin calibrat. Răspunsul este cerut în mod obligatoriu în format **JSON** cu următorul format:
-*   `scor_intensitate_negativa`: Valoare între `0-10`.
-*   `este_mascare_psihica`: `<bool>` indică dacă utilizatorul simulează o stare bună dar contextul anterior indică degradare.
-*   `text_este_sarcastic` / `text_are_umor_negru`: Identifică mecanismele defensive de coping.
-*   `feedback`: Text empatic, cald, personalizat, fără clișee.
-### Formula de Scor Text
-Backend-ul rulează o funcție de calibrare post-AI (`calculeaza_scor`):
-*   **Zona 1 (0-30%)**: Tristețe normală.
-*   **Zona 2 (30-70%)**: Stres moderat și depresie ușoară-medie.
-*   **Zona 3 (70-100%)**: Depresie severă, ideație pasivă sau plan iminent.
-*   **Algoritmul de Carantină**: Dacă scorul anterior al utilizatorului era $\ge 70\%$, algoritmul limitează scăderea bruscă a scorului la maximum $15\%$ pe mesaj, prevenind disimularea sau mascarea stării critice.
+
+## 2. Modulul de Text: Analiză Semantică & Pragmatică
+
+Modulul procesează textul introdus direct de utilizator sau extras automat din capturi de ecran folosind un motor de recunoaștere optică a caracterelor (**Tesseract OCR**).
+
+### A. Fluxul de Date
+1. Utilizatorul introduce un mesaj sau încarcă o captură de ecran (trimisă ca `multipart/form-data`).
+2. Serverul rulează **pytesseract** pentru extragerea textului din imagine.
+3. Se extrage contextul istoric (ultimele 3 mesaje de dialog) și scorurile de risc anterioare din baza de date SQLite.
+4. Se apelează modelul `llama-3.1-8b-instant` prin Groq.
+
+### B. Prompt-ul Clinic & Structurarea Răspunsului
+AI-ul este constrâns să răspundă exclusiv într-un obiect **JSON** bine definit:
+```json
+{
+  "scor_intensitate_negativa": 0..10,
+  "este_mascare_psihica": true/false,
+  "text_indica_depresie_cronica": true/false,
+  "text_indica_frustrare_stres": true/false,
+  "text_are_plan_iminent": true/false,
+  "text_este_sarcastic": true/false,
+  "text_are_umor_negru": true/false,
+  "text_indica_autoaccidentare_sau_arme": true/false,
+  "feedback": "Evaluare caldă, empatică sau raport pentru aparținător",
+  "avertismente_speciale": "Mesaj critic de alertă"
+}
+```
+
+### C. Personalizarea în Funcție de Tipul Detecției
+*   **Modul „Proprie” (utilizatorul însuși)**: Răspunsul este generat la persoana a II-a singular ("tu"), fiind cald, empatic, evitând etichetele clinice directe sau limbajul brutal.
+*   **Modul „Apropiat” (membru de familie/tutore)**: Răspunsul este formulat la persoana a III-a, extrem de direct, oferind detalii clinice precise și recomandări concrete pentru protecția persoanei supravegheate.
+
+### D. Algoritmul de Carantină Vocală/Linguistică
+Pentru a bloca comportamentul de disimulare (utilizatorii critici care vorbesc brusc vesel sau neagă problemele), backend-ul implementează un limitator de pantă:
+$$\text{Dacă } S_{t-1} \ge 70\% \implies S_t = \max(S_t, S_{t-1} - 15\%)$$
+Scorul curent ($S_t$) nu poate scădea cu mai mult de $15\%$ pe mesaj față de cel precedent ($S_{t-1}$), forțând menținerea monitorizării stricte.
+
 ---
-## 3. Modulul de Voce: Extragerea Trăsăturilor Acustice și Transcrierea
-Modulul de voce analizează atât *ceea ce se spune* (transcrierea), cât și *cum se spune* (acustica vocii).
-### Pasul 1: Înregistrare și Upload (Frontend)
-Utilizatorul înregistrează vocea de la microfon printr-un `MediaRecorder` în format brut `audio/wav`, sau încarcă un fișier audio. Acest fișier este citit ca buffer binar, convertit în `base64` și trimis la endpoint-ul `/analyze-voice`.
-### Pasul 2: Transcrierea (Groq Whisper)
-Serverul trimite fișierul audio către modelul cloud **Whisper-large-v3** prin Groq pentru a obține o transcriere română de înaltă acuratețe, care este apoi trimisă modulului de text pentru analiză clinică.
-### Pasul 3: Extragerea Trăsăturilor Acustice (`librosa`)
-Serverul salvează audio pe disc și îl încarcă în librăria DSP `librosa` din Python pentru a extrage:
-1.  **Energy (Amplitudinea medie)**: Persoanele depresive tind să vorbească cu energie scăzută (vocalizare plată).
-2.  **Pace / Tempo (BPM)**: Ritmul lent al vorbirii este un indicator puternic de retard psihomotor (specific depresiei).
-3.  **Zero Crossing Rate (ZCR / Claritatea)**: O rată mică indică o vorbire monotonă, neclară sau mormăită.
-4.  **Spectral Centroid (Tone / Strălucire)**: Măsoară „luminozitatea” vocii. O valoare joasă indică o voce plată, lipsită de variație tonală.
-### Calculul Scorului Vocal
-Acuratețea este determinată de o formulă de agregare ponderată:
-$$\text{Scor Vocal} = (\text{Scor Energie} \times 0.35) + (\text{Scor Ritm} \times 0.25) + (\text{Scor Claritate} \times 0.20) + (\text{Scor Ton} \times 0.20)$$
+
+## 3. Modulul de Voce: Prelucrare Paralingvistică DSP
+
+Modulul combină analiza lingvistică (semantica transcrierii) cu analiza paralingvistică (trăsăturile acustice ale undei sonore).
+
+### A. Extragerea Trăsăturilor Acustice
+Fișierul audio format WAV este procesat folosind librăriile Python `librosa` și `numpy`. Se extrag 4 parametri acustici cheie:
+1.  **Energy (Amplitudinea RMS)**: Detectează hipofonia (vorbirea șoptită, plată, specifică stării depresive).
+2.  **Tempo / Ritm (BPM)**: Măsoară retardul psihomotor. Ritmul lent (< 85 BPM) indică o stare de letargie.
+3.  **Zero Crossing Rate (ZCR / Claritatea)**: O rată scăzută a trecerilor prin zero indică o pronunție neclară, mormăită.
+4.  **Spectral Centroid (Tone / Strălucire)**: Indică strălucirea vocii. Variațiile reduse și valorile joase reflectă o voce monotonă, plată.
+
+### B. Formula de Agregare a Scorului Acustic
+$$S_{acustic} = (S_{energie} \times 0.35) + (S_{ritm} \times 0.25) + (S_{claritate} \times 0.20) + (S_{ton} \times 0.20)$$
+
+> [!TIP]
+> **Toleranță la Erori (Fault Tolerance)**: Dacă librăria `librosa` lipsește pe server, sistemul comută automat pe un motor secundar dezvoltat în cod Python pur, bazat doar pe modulele standard `wave` și `numpy`.
+
 ---
-## 4. Modulul de Față: Recunoaștere și Analiză Biometrică
-Modulul de față utilizează procesarea hibridă: detecția biometrică se face client-side (pentru performanță optimă în timp real), iar analiza clinică se face server-side.
-### Pasul 1: Detecția pe Frontend (Face-API.js)
-1.  La pornirea serverului Python, acesta copiază automat modelele pre-antrenate din `node_modules` în folderul `public/models` al aplicației.
-2.  Aplicația React încarcă aceste modele locale (`tinyFaceDetector` și `faceExpressionNet`).
-3.  Când utilizatorul face un selfie sau încarcă o imagine, Face-API rulează în browser și extrage un set de scoruri (de la 0 la 1) pentru 7 emoții de bază: *sad, happy, angry, fearful, neutral, disgusted, surprised*.
-### Pasul 2: Procesarea pe Backend (`face.py`)
-Frontend-ul trimite aceste scoruri de emoții brute către `/analyze-face`. Algoritmul din [face.py](file:///C:/Users/Podean%20Beniamin/Desktop/licenta/Anchor/anchorExe/backend/venv/face.py) procesează datele folosind următoarele modele matematice:
-#### A. Modelul Continuu pentru Anhedonie
-Anhedonia reprezintă incapacitatea de a simți plăcere (lipsa bucuriei). Pentru a evita salturile bruște în scor, am creat o funcție continuă:
-$$I_{anhedonie} = \max(0, 100 - S_{happy} \times 1.5)$$
-Unde $I_{anhedonie}$ este indicatorul de anhedonie, iar $S_{happy}$ este scorul de fericire exprimat în procente (0-100%). Dacă utilizatorul are peste $66\%$ fericire, indicatorul de anhedonie scade la $0\%$.
-#### B. Ponderarea Indicatorilor Negativi
-Calculăm un scor brut ($S_{brut}$) ponderând trăsăturile specifice corelate clinic cu stările depresive sau de anxietate:
-$$S_{brut} = (S_{sad} \times 0.50) + (I_{anhedonie} \times 0.30) + (S_{anxiety} \times 0.20) + (S_{anger} \times 0.10) + (S_{numbness} \times 0.10)$$
-Unde $S_{sad}$, $S_{anxiety}$, $S_{anger}$ și $S_{numbness}$ reprezintă scorurile pentru tristețe, anxietate, furie și stare neutră/apatie.
-#### C. Filtrul de Suprimare Activă a Fericirii
-Pentru a elimina erorile în care o persoană bucuroasă primea un scor de depresie facială (din cauza unor micro-expresii sau umbre), am implementat un factor de suprimare ($F_{suprimare}$):
-$$F_{suprimare} = \max\left(0.0, 1.0 - \frac{S_{happy}}{60.0}\right)$$
-$$S_{fata} = S_{brut} \times F_{suprimare}$$
-Unde $S_{fata}$ este scorul final de risc depresiv facial. Dacă fericirea detectată depășește $60\%$, factorul devine $0$, iar scorul final de risc depresiv facial devine automat **$0\%$**.
+
+## 4. Modulul de Față: Biometrie Locală & Supervizare Vision
+
+Modulul analizează micro-expresiile faciale și recunoaște elementele fizice din cadru în mod hibrid.
+
+### A. Edge AI: Face-API.js
+Frontend-ul captează fluxul video de la cameră la 30 FPS și rulează modelele pre-antrenate local. Trimite spre backend probabilitățile (0-1) pentru cele 7 expresii de bază: *sad, happy, angry, fearful, neutral, disgusted, surprised*.
+
+### B. Corecții Matematice pe Backend (`face.py`)
+*   **Modelul Continuu pentru Anhedonie**:
+    $$I_{anhedonie} = \max(0, 100 - S_{happy} \times 1.5)$$
+*   **Scorul de Risc Brut ($S_{brut}$)**:
+    $$S_{brut} = (S_{sad} \times 0.50) + (I_{anhedonie} \times 0.30) + (S_{anxiety} \times 0.20) + (S_{anger} \times 0.10) + (S_{numbness} \times 0.10)$$
+*   **Filtrul de Suprimare Activă a Fericirii**:
+    $$F_{suprimare} = \max\left(0.0, 1.0 - \frac{S_{happy}}{60.0}\right)$$
+    $$S_{fata} = S_{brut} \times F_{suprimare}$$
+
+### C. Supervizare Groq Vision (Llama 3.2 Vision Override)
+În scenariile în care utilizatorul își ascunde mimica, dar în cadru se află elemente de risc extrem (arme, funie, semne vizuale de auto-vătămare), o captură de ecran este trimisă pe backend la `llama-3.2-11b-vision-preview`:
+*   Dacă modelul detectează vizual aceste elemente, **scorul facial este forțat instantaneu la 100% (Override)**.
+*   Dacă API-ul dă eroare sau dă refuz de siguranță (*Safety Refusal*), din motive defensive, backend-ul Flask interceptează excepția și **forțează de asemenea scorul la 100% (Fail-Safe)**.
+
 ---
-## 5. Integrarea Multimodală (Scorul Combinat)
-Când utilizatorul folosește în paralel mai multe modalități (de exemplu, o sesiune în care vorbește la microfon și are camera pornită), serverul agregă datele la endpoint-ul `/analyze-multimodal`.
-### Ponderile de Agregare:
-*   **Text (Limbaj)**: $50\%$ (Cea mai de încredere sursă, analizată de LLM-ul clinic).
-*   **Voce (Acoustic)**: $25\%$ (Indicatori fizici și ritm).
-*   **Față (Biometrie)**: $25\%$ (Expresia facială).
-### Scorul de Încredere (Confidence Score):
-Dacă toate cele trei modalități sunt prezente, sistemul calculează diferența maximă dintre ele pentru a evalua dacă indicatorii converg:
-$$\text{Divergență Maximă} = \max(|T - V|, |T - F|, |V - F|)$$
+
+## 5. Integrarea Multimodală & Scorul de Încredere
+
+Atunci când utilizatorul rulează analiza simultan, sistemul integrează datele la endpoint-ul `/analyze-multimodal` conform următoarelor ponderi:
+$$\text{Scor Multimodal} = (S_{text} \times 0.50) + (S_{voce} \times 0.25) + (S_{fata} \times 0.25)$$
+
+### Scorul de Încredere (Confidence Score)
+Sistemul calculează convergența modalităților de analiză:
+$$\text{Divergență Maximă} = \max(|S_{text} - S_{voce}|, |S_{text} - S_{fata}|, |S_{voce} - S_{fata}|)$$
 $$\text{Scor Încredere (Confidence)} = \max(0, 100 - \text{Divergență Maximă})$$
-Dacă toate modalitățile indică scoruri similare (de exemplu text=60%, voce=58%, fata=62%), încrederea este de peste $95\%$. Dacă sunt complet opuse (de exemplu, utilizatorul scrie că este foarte trist dar zâmbește larg la cameră), încrederea scade drastic, indicând disimulare sau mascare.
+Dacă toate canalele indică rezultate similare, încrederea este maximă ($\ge 95\%$). O divergență mare (ex. text fericit, dar voce deprimată și zâmbet fals) indică un efort psihic de mascare sau disimulare.
+
 ---
-## 6. Persistența Datelor și Ștergerea Securizată
-### Structura Bazei de Date (SQLite)
-*   `voice_analysis`: Salvează ID-ul chat-ului, transcrierea, calea către fișierul audio `.wav`, scorul general de voce și trăsăturile DSP individuale (tempo, energy, etc.).
-*   `face_analysis`: Salvează calea către selfie-ul `.jpg`, scorurile pentru fiecare din cele 7 emoții, indicatorii clinici detaliați și scorul final.
-### Ștergerea Securizată (Privacy GDPR)
-La solicitarea utilizatorului prin butoanele "Șterge Istoricul":
-1.  **Ștergere Bază de Date**: Serverul execută instrucțiunea SQL `DELETE FROM table WHERE chat_id = ?`.
-2.  **Curățare Hard Disk**: Backend-ul citește URL-urile imaginilor/clipurilor audio din baza de date înainte de ștergere, extrage numele fișierelor și le șterge fizic din folderul `uploads/` folosind biblioteca `os` din Python, eliberând spațiul și securizând datele.
+
+## 6. Persistența Datelor & Politica de Confidențialitate (GDPR)
+
+Proiectul folosește baza de date SQLite `mindscan_history.db` ce conține 6 tabele corelate în a 3-a Formă Normală (3NF):
+
+| Tabel | Rol și Descriere |
+| :--- | :--- |
+| `chaturi` | Stochează identificatorul unic al sesiunii, data creării, numele utilizatorului/apropiatului. |
+| `analize` | Reține istoricul conversației pe text și rezultatele semantice LLM. |
+| `voice_analysis` | Salvează fișierele audio în format `.wav` și parametrii acustici DSP extrași. |
+| `face_analysis` | Stochează instantaneele faciale `.jpg`, expresiile Face-API și notele Vision AI. |
+| `multimodal_analysis` | Reține datele agregate de sinteză și scorurile de încredere/divergență. |
+| `conversation_context` | Memoria tampon utilizată pentru trimiterea corectă a contextului la Groq API. |
+
+### Ștergerea Securizată (GDPR Right to be Forgotten)
+Pentru a asigura conformitatea deplină cu GDPR:
+1. Înainte de a șterge intrările din SQL, serverul citește căile fizice ale fișierelor audio și foto din tabelele `voice_analysis` și `face_analysis`.
+2. Folosind biblioteca Python `os`, fișierele sunt șterse complet de pe hard disk din folderul `uploads/`.
+3. Se execută operațiunea SQL `DELETE`, asigurându-se că pe server nu rămân fișiere orfane sau date cu caracter personal.
+
 ---
-## 7. Tehnologii și Unelte Utilizate
-*   **Vite & React 19**: Framework frontend rapid, utilizând Hooks (`useState`, `useEffect`, `useRef`) pentru managementul camerelor web și al fluxurilor media.
-*   **@vladmandic/face-api**: Wrapper modern pentru Tensorflow.js care rulează Tiny Face Detector direct în browser-ul utilizatorului.
-*   **Flask & Flask-CORS**: Web framework Python utilizat pentru rutarea API-ului.
-*   **Groq SDK & Groq Cloud**: Infrastructură LPU de ultra-mare viteză folosită pentru inferențele Llama 3.1 și Whisper.
-*   **Librosa & NumPy**: Librării Python folosite pentru prelucrarea semnalelor digitale (DSP) și analiză acustică.
-*   **Pytesseract & Tesseract OCR**: Motor de recunoaștere optică a caracterelor în imagini.
+
+## 7. Ghid de Instalare & Configurare Pas cu Pas
+
+### Cerințe Premise
+*   **Python 3.10** sau versiuni superioare
+*   **Node.js 18** sau versiuni superioare
+*   **Tesseract OCR** instalat pe sistemul de operare:
+    *   *Windows*: Descarcă instalatorul și adaugă calea executabilului în variabila `PATH` (ex: `C:\Program Files\Tesseract-OCR`).
+    *   *Linux (Ubuntu/Debian)*: `sudo apt install tesseract-ocr`
+
+### 1. Configurarea Backend-ului (Python Flask)
+Deschide o consolă în directorul backend al proiectului:
+```bash
+# Navighează în folderul backend (sau venv-ul acestuia)
+cd anchorExe/backend/venv
+
+# Crearea mediului virtual (dacă nu există deja)
+python -m venv .
+
+# Activarea mediului virtual
+# Pe Windows:
+.\Scripts\activate
+# Pe Linux/macOS:
+source bin/activate
+
+# Instalarea dependențelor necesare
+pip install -r ../requirements.txt
+```
+
+### 2. Fișierul de Configurare (.env)
+În directorul `anchorExe/backend/venv/` creează un fișier numit `.env` și adaugă cheia ta API pentru Groq:
+```env
+GROQ_API_KEY=cheia_ta_api_groq_aici
+```
+
+### 3. Configurarea Frontend-ului (React Vite)
+Deschide o consolă nouă în folderul frontend (`anchorExe/`):
+```bash
+# Navighează în folderul frontend
+cd anchorExe
+
+# Instalează dependențele Node.js
+npm install
+```
+
+---
+
+## 8. Lansarea în Execuție
+
+Sistemul este pornit rulând în paralel serverul backend și serverul de dezvoltare frontend.
+
+### Pasul 1: Lansarea Backend-ului Flask
+În consola asociată mediului virtual din backend (`anchorExe/backend/venv` cu mediul activat):
+```bash
+python app.py
+```
+Serverul Flask va fi lansat local pe portul `http://localhost:5000`.
+
+### Pasul 2: Lansarea Frontend-ului React
+În consola asociată folderului frontend (`anchorExe/`):
+```bash
+npm run dev
+```
+Aplicația se va deschide în browser pe portul `http://localhost:5173`.
+
+---
+*Proiect de Licență realizat în cadrul Universității Politehnica Timișoara (UPT), Facultatea de Automatică și Calculatoare, Specializarea Automatică și Informatică Aplicată (AIA).*
