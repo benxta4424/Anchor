@@ -61,16 +61,17 @@ Modulul de față utilizează procesarea hibridă: detecția biometrică se face
 Frontend-ul trimite aceste scoruri de emoții brute către `/analyze-face`. Algoritmul din [face.py](file:///C:/Users/Podean%20Beniamin/Desktop/licenta/Anchor/anchorExe/backend/venv/face.py) procesează datele folosind următoarele modele matematice:
 #### A. Modelul Continuu pentru Anhedonie
 Anhedonia reprezintă incapacitatea de a simți plăcere (lipsa bucuriei). Pentru a evita salturile bruște în scor, am creat o funcție continuă:
-$$\text{anhedonia\_indicator} = \max(0, 100 - \text{happy\_score} \times 1.5)$$
-Dacă utilizatorul are peste $66\%$ fericire, indicatorul de anhedonie scade la $0\%$.
+$$I_{anhedonie} = \max(0, 100 - S_{happy} \times 1.5)$$
+Unde $I_{anhedonie}$ este indicatorul de anhedonie, iar $S_{happy}$ este scorul de fericire exprimat în procente (0-100%). Dacă utilizatorul are peste $66\%$ fericire, indicatorul de anhedonie scade la $0\%$.
 #### B. Ponderarea Indicatorilor Negativi
-Calculăm un scor brut ponderând trăsăturile specifice corelate clinic cu stările depresive sau de anxietate:
-$$\text{raw\_score} = (\text{sadness} \times 0.50) + (\text{anhedonia} \times 0.30) + (\text{anxiety} \times 0.20) + (\text{anger} \times 0.10) + (\text{numbness} \times 0.10)$$
+Calculăm un scor brut ($S_{brut}$) ponderând trăsăturile specifice corelate clinic cu stările depresive sau de anxietate:
+$$S_{brut} = (S_{sad} \times 0.50) + (I_{anhedonie} \times 0.30) + (S_{anxiety} \times 0.20) + (S_{anger} \times 0.10) + (S_{numbness} \times 0.10)$$
+Unde $S_{sad}$, $S_{anxiety}$, $S_{anger}$ și $S_{numbness}$ reprezintă scorurile pentru tristețe, anxietate, furie și stare neutră/apatie.
 #### C. Filtrul de Suprimare Activă a Fericirii
-Pentru a elimina erorile în care o persoană bucuroasă primea un scor de depresie facială (din cauza unor micro-expresii sau umbre), am implementat un factor de suprimare:
-$$\text{happiness\_suppression} = \max\left(0.0, 1.0 - \frac{\text{happy\_score}}{60.0}\right)$$
-$$\text{overall\_face\_depression\_score} = \text{raw\_score} \times \text{happiness\_suppression}$$
-Dacă fericirea detectată depășește $60\%$, factorul devine $0$, iar scorul final de risc depresiv facial devine automat **$0\%$**.
+Pentru a elimina erorile în care o persoană bucuroasă primea un scor de depresie facială (din cauza unor micro-expresii sau umbre), am implementat un factor de suprimare ($F_{suprimare}$):
+$$F_{suprimare} = \max\left(0.0, 1.0 - \frac{S_{happy}}{60.0}\right)$$
+$$S_{fata} = S_{brut} \times F_{suprimare}$$
+Unde $S_{fata}$ este scorul final de risc depresiv facial. Dacă fericirea detectată depășește $60\%$, factorul devine $0$, iar scorul final de risc depresiv facial devine automat **$0\%$**.
 ---
 ## 5. Integrarea Multimodală (Scorul Combinat)
 Când utilizatorul folosește în paralel mai multe modalități (de exemplu, o sesiune în care vorbește la microfon și are camera pornită), serverul agregă datele la endpoint-ul `/analyze-multimodal`.
