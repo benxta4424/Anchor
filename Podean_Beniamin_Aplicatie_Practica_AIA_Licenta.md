@@ -1,5 +1,5 @@
 # Ghid de Instalare, Compilare şi Lansare: Sistemul Multimodal Anchor
-**Student:** Podean Beniamin  
+**Student:** Podean Beniamin-Daniel  
 **Specializarea:** Automatică şi Informatică Aplicată (AIA) / Ingineria Sistemelor (IS)  
 **Instituţie:** Universitatea Politehnica Timişoara (UPT)  
 
@@ -7,7 +7,7 @@
 
 ## 1. Adresa Repository-ului Git
 Codul sursă al proiectului este găzduit şi versionat la adresa:
-👉 **[https://gitlab.upt.ro/beniamin.podean/Anchor](https://gitlab.upt.ro/beniamin.podean/Anchor)**
+👉 **[https://github.com/benxta4424/Anchor](https://github.com/benxta4424/Anchor)**
 
 *(Notă: Repository-ul conţine istoricul complet al dezvoltării, structurat fără fişiere binare compilate sau directoare grele precum `node_modules` şi `__pycache__`, acestea fiind excluse prin reguli `.gitignore` standard).*
 
