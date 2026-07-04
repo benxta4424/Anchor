@@ -1117,10 +1117,10 @@ def call_llm_voice_diagnostic_api(text_content, voice_features, voice_scores, is
     duration = voice_features.get("duration", 0.0)
     
     acoustic_details = (
-        f"1. Energie vocală (RMS): {rms_energy:.4f} (Scor energie: {voice_scores.get('energy_score', 0)}% - energie redusă indică adesea letargie/oboseală)\n"
-        f"2. Ritmul vorbirii (Tempo): {tempo:.1f} BPM (Scor ritm/pace: {voice_scores.get('pace_score', 0)}% - ritm lent/obosit sugerează încetinire psihomotorie)\n"
-        f"3. Claritate vocală (Zero Crossing Rate): {zcr:.4f} (Scor claritate: {voice_scores.get('clarity_score', 0)}% - claritate scăzută indică articulare mormăită/monotonă)\n"
-        f"4. Ton/Pitch vocal mediu (Spectral Centroid): {centroid:.1f} Hz (Scor ton: {voice_scores.get('tone_score', 0)}% - centroid scăzut reflectă o exprimare plată, lipsită de intonație)\n"
+        f"1. Energie vocală (RMS): {rms_energy:.4f} (Scor risc energie: {voice_scores.get('energy_score', 0)}% - unde 0% înseamnă energie vocală puternică/sănătoasă, iar 100% înseamnă oboseală/letargie severă)\n"
+        f"2. Ritmul vorbirii (Tempo): {tempo:.1f} BPM (Scor risc ritm: {voice_scores.get('pace_score', 0)}% - unde 0% înseamnă ritm normal/alert, iar 100% înseamnă vorbire extrem de lentă/retard psihomotor)\n"
+        f"3. Claritate vocală (Zero Crossing Rate): {zcr:.4f} (Scor risc claritate: {voice_scores.get('clarity_score', 0)}% - unde 0% înseamnă articulare clară și distinctă, iar 100% înseamnă mormăială/neclaritate)\n"
+        f"4. Ton/Pitch vocal mediu (Spectral Centroid): {centroid:.1f} Hz (Scor risc ton: {voice_scores.get('tone_score', 0)}% - unde 0% înseamnă exprimare expresivă și tonalitate variată, iar 100% înseamnă voce plată și monotonă)\n"
         f"5. Durata mesajului: {duration:.2f} secunde."
     )
 
