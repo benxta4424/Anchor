@@ -67,9 +67,9 @@ def process_face_api_result(face_detection_data: Dict[str, Any]) -> Dict[str, An
         
         # Refinement to avoid misclassifying irritability (angry) as sadness or neutral.
         # Face-API often underestimates anger (frowning can be read as neutral or sad).
-        # If there is an active anger signal (> 8%) and it is close to or greater than sadness,
-        # or if disgust is present, promote to angry.
-        if (angry_score > 0.08 or disgusted_score > 0.08) and (angry_score * 1.2 > sad_score or disgusted_score > sad_score):
+        # We lower the active threshold to 3% (> 0.03) for both anger and disgust
+        # to ensure subtle expressions are promoted correctly.
+        if (angry_score > 0.03 or disgusted_score > 0.03) and (angry_score * 2.0 > sad_score or disgusted_score * 1.8 > sad_score):
             dominant_emotion = 'angry'
         
         return {
@@ -150,22 +150,23 @@ def analyze_face_depression_indicators(face_data: Dict[str, Any]) -> Dict[str, A
     
     # 3. IRITABILITATE (Irritability): Irritable mood, typical in agitated depression
     # Fuses angry and disgusted expressions
-    irritability_val = angry_score * 1.0 + disgusted_score * 0.6
-    if dominant_emotion == 'angry' or dominant_emotion == 'disgusted' or (angry_score > 10 and angry_score * 1.2 > sad_score):
-        base_irritability = max(angry_score, sad_score)
-        if dominant_emotion == 'angry':
-            # Boost angry dominant faces
-            irritability_val = max(base_irritability * 1.2, angry_score + 20)
+    # Multiply disgusted_score by 1.8 because Face-API is highly insensitive to nose wrinkling (disgust)
+    irritability_val = angry_score * 1.2 + disgusted_score * 1.8
+    if dominant_emotion == 'angry' or dominant_emotion == 'disgusted' or (angry_score > 5 and angry_score * 1.5 > sad_score) or (disgusted_score > 5):
+        base_irritability = max(angry_score, disgusted_score, sad_score)
+        if dominant_emotion == 'angry' or dominant_emotion == 'disgusted':
+            # Boost angry/disgusted dominant faces
+            irritability_val = max(base_irritability * 1.25, irritability_val + 15)
         else:
             irritability_val = max(base_irritability, irritability_val)
     else:
         if angry_score >= sad_score:
             irritability_val = angry_score
-        elif angry_score > 10:
+        elif angry_score > 5:
             anger_ratio = angry_score / max(angry_score + sad_score, 1)
-            irritability_val = angry_score * (0.5 + anger_ratio)
+            irritability_val = angry_score * (0.6 + anger_ratio * 0.4)
         else:
-            irritability_val = angry_score * 0.5
+            irritability_val = angry_score * 0.6
     depression_indicators["irritability_indicator"] = int(min(100, irritability_val))
     
     # 4. ANHEDONIE (Anhedonia): Inability to feel pleasure
