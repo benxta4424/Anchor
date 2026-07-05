@@ -5,7 +5,13 @@ export default function InterfaceBox({ title, description, icon, boxID }) {
         <Link to={boxID} className="fpBoxOptionLink">
             <article className="fpBoxOptionContainer">
                 <div className="fpBoxOptionImageWrapper">
-                    <img src={icon} alt={`Icon for ${title}`} className="fpBoxOptionImage" />
+                    <img 
+                        src={icon} 
+                        alt={`Icon for ${title}`} 
+                        className="fpBoxOptionImage" 
+                        loading="eager"
+                        decoding="sync"
+                    />
                     <div className="fpBoxOptionOverlay">
                         <span className="fpBoxOptionCta">Launch →</span>
                     </div>
