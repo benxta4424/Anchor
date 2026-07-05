@@ -514,7 +514,7 @@ const EnhancedVoiceComponent = ({ chatId }) => {
         triggerToast('success', 'Analiza vocală a fost finalizată!');
         
         const combinedScore = result.combined_analysis?.voice_depression_indicator || result.voice_analysis?.overall_voice_indicator || 0;
-        if (combinedScore >= 70 || (result.text_analysis && result.text_analysis.score >= 70)) {
+        if (combinedScore >= 80 || (result.text_analysis && result.text_analysis.score >= 80)) {
           setCriticalScore(Math.max(combinedScore, result.text_analysis?.score || 0));
           setShowEmergencyPopup(true);
         }

@@ -299,9 +299,9 @@ export default function TextAnaliser() {
         }
     };
 
-    // Monitorizare scor critic pentru popup
+    // Monitorizare scor critic pentru popup (peste 80% ideație)
     useEffect(() => {
-        if (lastScore && lastScore.score >= 70) {
+        if (lastScore && lastScore.score >= 80) {
             if (isInteractiveAction.current) {
                 setCriticalScore(lastScore.score);
                 setShowEmergencyPopup(true);
