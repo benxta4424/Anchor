@@ -83,7 +83,6 @@ export default function TextAnaliser() {
     const activeChatRef = useRef(activeChat);
     const prevActiveChatIdRef = useRef(null);
     const fileInputRef = useRef(null);
-    const isInteractiveAction = useRef(false);
 
     useEffect(() => {
         activeChatRef.current = activeChat;
@@ -299,16 +298,7 @@ export default function TextAnaliser() {
         }
     };
 
-    // Monitorizare scor critic pentru popup (peste 80% ideație)
-    useEffect(() => {
-        if (lastScore && lastScore.score >= 80) {
-            if (isInteractiveAction.current) {
-                setCriticalScore(lastScore.score);
-                setShowEmergencyPopup(true);
-            }
-        }
-        isInteractiveAction.current = false;
-    }, [lastScore]);
+
 
     const handleCreateChat = async (e) => {
         e.preventDefault();
@@ -374,7 +364,6 @@ export default function TextAnaliser() {
         e.preventDefault();
         if (!activeChat || (!rawText.trim() && !file)) return;
 
-        isInteractiveAction.current = true;
         const currentText = rawText.trim();
         const currentPreview = preview;
         const currentFile = file;
@@ -411,6 +400,12 @@ export default function TextAnaliser() {
             }]);
             const newScore = { score: data.score, category: data.category };
             setLastScore(newScore);
+
+            // Trigger emergency popup if score is critical (>= 80)
+            if (data.score >= 80) {
+                setCriticalScore(data.score);
+                setShowEmergencyPopup(true);
+            }
 
             // refresh grafic după trimitere
             fetchChartData(activeChat.id);
@@ -451,6 +446,12 @@ export default function TextAnaliser() {
             initializeChecklist(data.score);
             setShowDiagnosticPanel(true);
 
+            // Trigger emergency popup if generated diagnosis is critical (>= 80)
+            if (data.score >= 80) {
+                setCriticalScore(data.score);
+                setShowEmergencyPopup(true);
+            }
+
             setChatMessages((prev) => [...prev, {
                 sender: "system",
                 text: `📊 O nouă evaluare clinică a fost generată în panoul lateral (${data.score}% - ${data.category}).`
@@ -486,12 +487,19 @@ export default function TextAnaliser() {
                         <div
                             key={c.id}
                             className={`cleanItem ${activeChat?.id === c.id ? "active" : ""} ${deletingId === c.id ? "deleting" : ""}`}
-                            onClick={() => {
-                                isInteractiveAction.current = true;
-                                if (activeChat?.id === c.id) {
-                                    fetchLatestDiagnosis(c.id);
-                                } else {
+                            onClick={async () => {
+                                if (activeChat?.id !== c.id) {
                                     setActiveChat(c);
+                                }
+                                try {
+                                    const response = await fetch(`http://localhost:5000/get-latest-diagnosis/${c.id}`);
+                                    const data = await response.json();
+                                    if (data.status === "success" && data.score >= 80) {
+                                        setCriticalScore(data.score);
+                                        setShowEmergencyPopup(true);
+                                    }
+                                } catch (err) {
+                                    console.error("Error checking critical score on click:", err);
                                 }
                             }}
                         >
