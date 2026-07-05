@@ -83,6 +83,7 @@ export default function TextAnaliser() {
     const activeChatRef = useRef(activeChat);
     const prevActiveChatIdRef = useRef(null);
     const fileInputRef = useRef(null);
+    const isInteractiveAction = useRef(false);
 
     useEffect(() => {
         activeChatRef.current = activeChat;
@@ -301,9 +302,12 @@ export default function TextAnaliser() {
     // Monitorizare scor critic pentru popup
     useEffect(() => {
         if (lastScore && lastScore.score >= 70) {
-            setCriticalScore(lastScore.score);
-            setShowEmergencyPopup(true);
+            if (isInteractiveAction.current) {
+                setCriticalScore(lastScore.score);
+                setShowEmergencyPopup(true);
+            }
         }
+        isInteractiveAction.current = false;
     }, [lastScore]);
 
     const handleCreateChat = async (e) => {
@@ -370,6 +374,7 @@ export default function TextAnaliser() {
         e.preventDefault();
         if (!activeChat || (!rawText.trim() && !file)) return;
 
+        isInteractiveAction.current = true;
         const currentText = rawText.trim();
         const currentPreview = preview;
         const currentFile = file;
@@ -481,7 +486,10 @@ export default function TextAnaliser() {
                         <div
                             key={c.id}
                             className={`cleanItem ${activeChat?.id === c.id ? "active" : ""} ${deletingId === c.id ? "deleting" : ""}`}
-                            onClick={() => setActiveChat(c)}
+                            onClick={() => {
+                                isInteractiveAction.current = true;
+                                setActiveChat(c);
+                            }}
                         >
                             <span className="title">{c.nume_persoana}</span>
                             <button
