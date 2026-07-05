@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react"
 import NavButtons from "./NavButtons"
-import { Outlet } from "react-router-dom"
+import { Outlet, useLocation } from "react-router-dom"
 import MiniDashboard from "./MiniDashboard"
+import Home from "./Home"
 
 // Sun and Moon Icons
 const SunIcon = () => (
@@ -19,6 +20,8 @@ const MoonIcon = () => (
 
 export default function FrontPage() {
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+    const location = useLocation();
+    const isRoot = location.pathname === "/";
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
@@ -57,6 +60,13 @@ export default function FrontPage() {
             </header>
 
             <main className="content">
+                {/* 
+                  Keep Home mounted in the DOM at all times to prevent 
+                  the images from unmounting and reloading/flashing!
+                */}
+                <div style={{ display: isRoot ? "block" : "none", width: "100%" }}>
+                    <Home />
+                </div>
                 <Outlet />
             </main>
 

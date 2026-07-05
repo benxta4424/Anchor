@@ -16,7 +16,7 @@ const my_routes = [
         children: [
             {
                 index:true,
-                element: <Home />
+                element: <div />
             },
 
             {
