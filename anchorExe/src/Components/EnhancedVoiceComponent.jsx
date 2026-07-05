@@ -793,7 +793,9 @@ const EnhancedVoiceComponent = ({ chatId }) => {
                 <div className="analysis-card">
                   <h5>Energie</h5>
                   <div className="metric-display">
-                    <span className="metric-value">{analysisResult.voice_analysis?.energy_score || 0}%</span>
+                    <span className="metric-value">
+                      {analysisResult?.voice_analysis ? 100 - (analysisResult.voice_analysis.energy_score || 0) : 0}%
+                    </span>
                     <span className="metric-label">Nivel energie</span>
                   </div>
                 </div>
@@ -801,7 +803,9 @@ const EnhancedVoiceComponent = ({ chatId }) => {
                 <div className="analysis-card">
                   <h5>Ritm Vorbire</h5>
                   <div className="metric-display">
-                    <span className="metric-value">{analysisResult.voice_analysis?.pace_score || 0}%</span>
+                    <span className="metric-value">
+                      {analysisResult?.voice_analysis ? 100 - (analysisResult.voice_analysis.pace_score || 0) : 0}%
+                    </span>
                     <span className="metric-label">Viteză vorbire</span>
                   </div>
                 </div>
@@ -809,7 +813,9 @@ const EnhancedVoiceComponent = ({ chatId }) => {
                 <div className="analysis-card">
                   <h5>Claritate</h5>
                   <div className="metric-display">
-                    <span className="metric-value">{analysisResult.voice_analysis?.clarity_score || 0}%</span>
+                    <span className="metric-value">
+                      {analysisResult?.voice_analysis ? 100 - (analysisResult.voice_analysis.clarity_score || 0) : 0}%
+                    </span>
                     <span className="metric-label">Articulație</span>
                   </div>
                 </div>
@@ -817,7 +823,9 @@ const EnhancedVoiceComponent = ({ chatId }) => {
                 <div className="analysis-card">
                   <h5>Ton Voce</h5>
                   <div className="metric-display">
-                    <span className="metric-value">{analysisResult.voice_analysis?.tone_score || 0}%</span>
+                    <span className="metric-value">
+                      {analysisResult?.voice_analysis ? 100 - (analysisResult.voice_analysis.tone_score || 0) : 0}%
+                    </span>
                     <span className="metric-label">Variație tonală</span>
                   </div>
                 </div>
@@ -1097,40 +1105,40 @@ const EnhancedVoiceComponent = ({ chatId }) => {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12.5px' }}>
                       <span style={{ color: 'var(--text-muted)' }}>Energie</span>
-                      <strong style={{ color: '#73daca' }}>{analysisResult?.voice_analysis?.energy_score || 0}%</strong>
+                      <strong style={{ color: '#73daca' }}>{analysisResult?.voice_analysis ? 100 - (analysisResult.voice_analysis.energy_score || 0) : 0}%</strong>
                     </div>
                     <div style={{ height: '6px', background: 'rgba(255,255,255,0.03)', borderRadius: '3px', overflow: 'hidden' }}>
-                      <div style={{ height: '100%', width: `${analysisResult?.voice_analysis?.energy_score || 0}%`, background: '#73daca', borderRadius: '3px', transition: 'width 0.6s ease' }} />
+                      <div style={{ height: '100%', width: `${analysisResult?.voice_analysis ? 100 - (analysisResult.voice_analysis.energy_score || 0) : 0}%`, background: '#73daca', borderRadius: '3px', transition: 'width 0.6s ease' }} />
                     </div>
                   </div>
                   {/* Ritm Vorbire */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12.5px' }}>
                       <span style={{ color: 'var(--text-muted)' }}>Ritm Vorbire</span>
-                      <strong style={{ color: '#ff9f43' }}>{analysisResult?.voice_analysis?.pace_score || 0}%</strong>
+                      <strong style={{ color: '#ff9f43' }}>{analysisResult?.voice_analysis ? 100 - (analysisResult.voice_analysis.pace_score || 0) : 0}%</strong>
                     </div>
                     <div style={{ height: '6px', background: 'rgba(255,255,255,0.03)', borderRadius: '3px', overflow: 'hidden' }}>
-                      <div style={{ height: '100%', width: `${analysisResult?.voice_analysis?.pace_score || 0}%`, background: '#ff9f43', borderRadius: '3px', transition: 'width 0.6s ease' }} />
+                      <div style={{ height: '100%', width: `${analysisResult?.voice_analysis ? 100 - (analysisResult.voice_analysis.pace_score || 0) : 0}%`, background: '#ff9f43', borderRadius: '3px', transition: 'width 0.6s ease' }} />
                     </div>
                   </div>
                   {/* Claritate Articulație */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12.5px' }}>
                       <span style={{ color: 'var(--text-muted)' }}>Claritate Articulație</span>
-                      <strong style={{ color: '#7aa2f7' }}>{analysisResult?.voice_analysis?.clarity_score || 0}%</strong>
+                      <strong style={{ color: '#7aa2f7' }}>{analysisResult?.voice_analysis ? 100 - (analysisResult.voice_analysis.clarity_score || 0) : 0}%</strong>
                     </div>
                     <div style={{ height: '6px', background: 'rgba(255,255,255,0.03)', borderRadius: '3px', overflow: 'hidden' }}>
-                      <div style={{ height: '100%', width: `${analysisResult?.voice_analysis?.clarity_score || 0}%`, background: '#7aa2f7', borderRadius: '3px', transition: 'width 0.6s ease' }} />
+                      <div style={{ height: '100%', width: `${analysisResult?.voice_analysis ? 100 - (analysisResult.voice_analysis.clarity_score || 0) : 0}%`, background: '#7aa2f7', borderRadius: '3px', transition: 'width 0.6s ease' }} />
                     </div>
                   </div>
                   {/* Ton Voce */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12.5px' }}>
                       <span style={{ color: 'var(--text-muted)' }}>Ton Voce</span>
-                      <strong style={{ color: '#bb9af7' }}>{analysisResult?.voice_analysis?.tone_score || 0}%</strong>
+                      <strong style={{ color: '#bb9af7' }}>{analysisResult?.voice_analysis ? 100 - (analysisResult.voice_analysis.tone_score || 0) : 0}%</strong>
                     </div>
                     <div style={{ height: '6px', background: 'rgba(255,255,255,0.03)', borderRadius: '3px', overflow: 'hidden' }}>
-                      <div style={{ height: '100%', width: `${analysisResult?.voice_analysis?.tone_score || 0}%`, background: '#bb9af7', borderRadius: '3px', transition: 'width 0.6s ease' }} />
+                      <div style={{ height: '100%', width: `${analysisResult?.voice_analysis ? 100 - (analysisResult.voice_analysis.tone_score || 0) : 0}%`, background: '#bb9af7', borderRadius: '3px', transition: 'width 0.6s ease' }} />
                     </div>
                   </div>
                 </div>
