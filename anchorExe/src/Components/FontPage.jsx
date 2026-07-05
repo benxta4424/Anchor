@@ -3,18 +3,6 @@ import NavButtons from "./NavButtons"
 import { Outlet } from "react-router-dom"
 import MiniDashboard from "./MiniDashboard"
 
-import textAnalyserIcon from "../img/iconBoxOne.jpg"
-import faceAnalyserIcon from "../img/iconBoxTwo.jpg"
-import voiceAnalyserIcon from "../img/iconBoxThree.jpg"
-
-// Preload cards images at module level so they stay in browser cache
-// and never flicker or disappear during page navigation
-if (typeof window !== "undefined") {
-  const img1 = new Image(); img1.src = textAnalyserIcon;
-  const img2 = new Image(); img2.src = faceAnalyserIcon;
-  const img3 = new Image(); img3.src = voiceAnalyserIcon;
-}
-
 // Sun and Moon Icons
 const SunIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="svg-icon">
