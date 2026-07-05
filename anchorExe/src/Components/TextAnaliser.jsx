@@ -488,7 +488,11 @@ export default function TextAnaliser() {
                             className={`cleanItem ${activeChat?.id === c.id ? "active" : ""} ${deletingId === c.id ? "deleting" : ""}`}
                             onClick={() => {
                                 isInteractiveAction.current = true;
-                                setActiveChat(c);
+                                if (activeChat?.id === c.id) {
+                                    fetchLatestDiagnosis(c.id);
+                                } else {
+                                    setActiveChat(c);
+                                }
                             }}
                         >
                             <span className="title">{c.nume_persoana}</span>
